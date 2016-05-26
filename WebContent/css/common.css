@@ -1,0 +1,49 @@
+
+#menu {
+	width: 70%;
+	height: 1200px;
+	background:;
+	margin-left: auto;
+	margin-right: auto;
+	border: 1px solid black;
+
+	/* float: left; */
+	/* overflow: auto; */
+}
+
+fieldset {
+	margin-left: auto;
+	margin-right: auto;
+	width: 90%
+}
+
+textarea {
+	width: 100%;
+	height: 50px;
+}
+
+h4 {
+	padding: 0px 30px;
+}
+
+#submitbtn {
+	font-size: 18px;
+	text-align: center;
+	padding: 3px 10px;
+	line-height: normal;
+	/*All for IE6&7&8 HACK 居中对齐*/
+	*padding: 3px 0 0 0;
+	padding-bottom: 1px\0; /*only for IE 8*/
+	/*END --All for IE6&7&8 HACK 居中对齐*/
+}
+
+#btn {
+	border: 0px;
+	padding: 0px 20%;
+}
+
+#console{
+	height:200px;
+	border: 1px solid black;
+	overflow: auto;
+}
