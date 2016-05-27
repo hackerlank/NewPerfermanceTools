@@ -10,6 +10,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.utils.HttpClientUtils;
+
+import cn.systoon.qc.jmxhandler.HttpClientUtil;
+import cn.systoon.qc.jmxhandler.JmxParserDom4jHandler;
+
 /**
  * Servlet implementation class PerformServlet
  */
@@ -21,9 +27,42 @@ public class PerformServlet extends HttpServlet {
         super();
     }
 
+    String ip = "";
+    String port = "";
+    String path = "";
+    String parameters = "";
+    String requestMethod = "";
+    String vuser = "";
+    String assertion = "";
+    String methodName = "";
+    String url = "";
+    String jmxPlanTemple = "/Users/perfermance/JmeterTest/script/jmxPlanTemple.jmx";
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String methodName=request.getParameter("method");
+		doPost(request, response);
+	}
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		ip = request.getParameter("ip");
+		port = request.getParameter("port");
+		path = request.getParameter("path");
+		parameters = request.getParameter("parameters");
+		requestMethod = request.getParameter("requestmethod");
+		vuser = request.getParameter("vuser");
+		assertion = request.getParameter("assertion");
+		methodName=request.getParameter("method");
+		
+		url = "http://" + ip + ":" + port + path;
+		
+		System.out.println("ip：" + ip);
+		System.out.println("port：" + port);
+		System.out.println("path：" + path);
+		System.out.println("parameters：" + parameters);
+		System.out.println("requestMethod：" + requestMethod);
+		System.out.println("vuser：" + vuser);
+		System.out.println("assertion：" + assertion);
+		System.out.println("methodName：" + methodName);
+		System.out.println("url：" + url);
+		
 		try {
 			Method method = getClass().getDeclaredMethod(methodName, HttpServletRequest.class,HttpServletResponse.class);
 			method.invoke(this, request,response);
@@ -32,21 +71,42 @@ public class PerformServlet extends HttpServlet {
 		} 
 	}
 	
+	
 	protected void test(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("test");
-		PrintWriter out = response.getWriter();
-		out.print("hello ,this is test");
+		
+		if(requestMethod.equals("get")){
+			System.out.println("get");
+			HttpClientUtil.get(url + "?" + parameters);
+		}else if(requestMethod.equals("post")){
+			System.out.println("post");
+			HttpClientUtil.postJson(url, parameters);
+		}
+		response.setCharacterEncoding("UTF-8");
+		response.getWriter().print(HttpClientUtil.getStringBuilder().toString());
+		
 	}
 	
 	protected void save(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("save");
-		PrintWriter out = response.getWriter();
-		out.print("hello ,this is save");
+		boolean flag = false;
+		String jmxPlan = "/Users/perfermance/JmeterTest/script/" + path.substring(1, path.length()).replace('/', '_') + "_" + vuser + ".jmx";
+		if(requestMethod.equals("get")){
+			flag = HttpClientUtil.get(url + "?" + parameters);
+		}else if(requestMethod.equals("post")){
+			flag = HttpClientUtil.postJson(url, parameters);
+		}
+		
+		if(!flag){
+			response.setCharacterEncoding("UTF-8");
+			response.getWriter().print(HttpClientUtil.getStringBuilder().toString());
+		}else{
+			JmxParserDom4jHandler.createJmxPlan(jmxPlanTemple, jmxPlan, ip, port, path, requestMethod, parameters, vuser, assertion);
+			response.setCharacterEncoding("UTF-8");
+			response.getWriter().print(JmxParserDom4jHandler.getStringBuilder().toString());
+		}
 		
 	}
+	
+	
 
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		doGet(request, response);
-	}
 
 }

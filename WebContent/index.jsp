@@ -6,6 +6,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="css/common.css">
+<script type="text/javascript" src="js/jquery-1.7.2.js"></script>
 <title>PerformanceTestPlatform</title>
 <script type="text/javascript">
 	function Change(obj) {
@@ -45,7 +46,7 @@
 			document.form1.parameters.focus();
 			return false;
 		}
-		document.form1.action = "performServlet?method=save";
+		/* document.form1.action = "performServlet?method=save"; */
 		return true;
 
 	}
@@ -61,18 +62,38 @@
 		if (checkEmpty()) {
 			var logNode=document.getElementById("console");
 			removeChildren(logNode);
-			ajaxRequest("performServlet?method=test");
+			document.getElementById("type").value= "test";
 		}
-
 	}
 	function savePlan() {
 		if (checkEmpty()) {
 			var logNode=document.getElementById("console");
 			removeChildren(logNode);
-			ajaxRequest("performServlet?method=save");
+			document.getElementById("type").value= "save";
 		}
-		return false;
-
+	}
+	
+	function submitPlan(){
+		var url;
+		if(document.getElementById("type").value== "save"){
+			url = "performServlet?method=save";
+		}else if(document.getElementById("type").value== "test"){
+			url = "performServlet?method=test";
+		}
+		$.ajax({
+			type:"post",
+			url:url,
+			data:$("#form").serialize(),
+			success:function(msg){
+				/* var text=$("<p></p>").text(msg); */ 
+				$("#console").html(msg);
+			},
+			error:function(xhr){
+			      alert("错误提示： " + xhr.status + " " + xhr.statusText);
+			}
+		
+		});
+        return false;
 	}
 
 	function ajaxRequest(url) {
@@ -85,13 +106,13 @@
 		xmlhttp.onreadystatechange = function(result) {
 			if (xmlhttp.readyState == 4) {
 				if (xmlhttp.status == 200) {
-					var preNode = document.createElement("pre");
+					var preNode = document.createElement("p");
 					var brNode = document.createElement("br");
 					var textNode = document.createTextNode(xmlhttp.responseText);
 					preNode.appendChild(textNode);
 					preNode.appendChild(brNode);
 					document.getElementById("console").appendChild(preNode);
-				}else {
+				}/* else {
 					var preNode = document.createElement("pre");
 					var brNode = document.createElement("br");
 					var textNode = document.createTextNode("请求失败");
@@ -100,7 +121,7 @@
 					preNode.appendChild(brNode);
 					preNode.appendChild(textNode1);
 					document.getElementById("console").appendChild(preNode);
-				}
+				} */
 			}
 		}
 		xmlhttp.open("GET", url, true);
@@ -112,7 +133,7 @@
 <body>
 	<div id=menu>
 		<h2 style="text-align: center">自动化性能测试平台</h2>
-		<form name="form1" action="" method="post">
+		<form id="form" name="form1" action="" method="post" onsubmit="return submitPlan()">
 			<h4>配置 HTTP 请求</h4>
 			<fieldset>
 				<legend>Web Server:</legend>
@@ -129,7 +150,7 @@
 
 					<tr>
 						<td>Server Name or IP:</td>
-						<td><input type="text" name="ip" size="30" value="127.0.0.1"></td>
+						<td><input type="text" name="ip" size="30" value="172.28.29.82"></td>
 						<td><p style="color: red; font-size: 10px">* 输入请求域名或ip地址</p></td>
 					</tr>
 
@@ -150,20 +171,20 @@
 				<table>
 					<tr>
 						<td>Path:</td>
-						<td><input type="text" name="path" size="30" value="/"></td>
+						<td><input type="text" name="path" size="30" value="/dataInterOper/operServlet/saveOperInfo"></td>
 						<td><p style="color: red; font-size: 10px">* 输入接口请求路径</p></td>
 					</tr>
 
 					<tr>
 						<td>Method:</td>
-						<td><select name="method">
+						<td><select name="requestmethod">
 								<option value="get">GET</option>
-								<option value="post">POST</option>
+								<option value="post" selected="selected">POST</option>
 						</select></td>
 					</tr>
 				</table>
 				Parameters:<br>
-				<textarea name="parameters" value="user=root&passwd=1234">qw</textarea>
+				<textarea name="parameters" value="user=root&passwd=1234">{"sign":"363b55c6fe4604377c0f64a112489411","t":"1456371556","data":{"sf": "2b9fc9ac4d8d12ce014d8dad55a30ad1","dn":"ac4d8d12ce014d8","ui":"22","ci":"34","ft":"2","fi":"004","bc":"1","bd":"1","dv":"3"},"appKey":"1c9fc9ac4d8dacce014d8dad55a30103"}</textarea>
 				<p style="color: red; font-size: 10px">* 输入请求参数</p>
 			</fieldset>
 			<br>
@@ -193,8 +214,9 @@
 			</fieldset>
 			<br /> <br />
 			<div id="btn">
-				<input type="submit" value="保存" onclick="return savePlan()">
-				<input type="button" value="测试接口" onclick="return testAPI()">
+				<input  type="hidden" value="" name="type" id="type">  
+				<input type="submit" value="保存" onclick="savePlan()" >
+				<input type="submit" value="测试接口" onclick="testAPI()">
 			</div>
 			<br /> <br />
 
