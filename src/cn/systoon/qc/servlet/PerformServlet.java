@@ -37,6 +37,7 @@ public class PerformServlet extends HttpServlet {
     String methodName = "";
     String url = "";
     String jmxPlanTemple = "/Users/perfermance/JmeterTest/script/jmxPlanTemple.jmx";
+	private boolean flag = false;
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doPost(request, response);
@@ -50,7 +51,9 @@ public class PerformServlet extends HttpServlet {
 		vuser = request.getParameter("vuser");
 		assertion = request.getParameter("assertion");
 		methodName=request.getParameter("method");
-		
+		if(port == ""){
+			port = "80";
+		}
 		url = "http://" + ip + ":" + port + path;
 		
 		System.out.println("ip：" + ip);
@@ -75,10 +78,12 @@ public class PerformServlet extends HttpServlet {
 	protected void test(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		if(requestMethod.equals("get")){
-			System.out.println("get");
-			HttpClientUtil.get(url + "?" + parameters);
+			if(parameters != ""){
+				HttpClientUtil.get(url + "?" + parameters);
+			}else{
+				HttpClientUtil.get(url);
+			}
 		}else if(requestMethod.equals("post")){
-			System.out.println("post");
 			HttpClientUtil.postJson(url, parameters);
 		}
 		response.setCharacterEncoding("UTF-8");
@@ -87,13 +92,27 @@ public class PerformServlet extends HttpServlet {
 	}
 	
 	protected void save(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		boolean flag = false;
-		String jmxPlan = "/Users/perfermance/JmeterTest/script/" + path.substring(1, path.length()).replace('/', '_') + "_" + vuser + ".jmx";
+		String jmxPlan = null;
+		if(path != ""){
+			jmxPlan = "/Users/perfermance/JmeterTest/script/" + path.substring(1, path.length()).replace('/', '_') + "_" + vuser + ".jmx";
+		}else{
+			jmxPlan = System.currentTimeMillis() + ".jmx";
+		}
+		
 		if(requestMethod.equals("get")){
-			flag = HttpClientUtil.get(url + "?" + parameters);
+			if(parameters != ""){
+				flag = HttpClientUtil.get(url + "?" + parameters);
+			}else{
+				System.out.println("2222");
+				flag = HttpClientUtil.get(url);
+			}
 		}else if(requestMethod.equals("post")){
 			flag = HttpClientUtil.postJson(url, parameters);
+		}else{
+			
+			System.out.println(flag);
 		}
+		
 		
 		if(!flag){
 			response.setCharacterEncoding("UTF-8");
