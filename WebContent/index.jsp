@@ -116,12 +116,12 @@
 			<div class="span8">
 				<div class="tabbable" id="tabs-789280">
 					<ul class="nav nav-tabs">
-						<li><a data-toggle="tab" href="#panel-978253">配置接口请求</a></li>
-						<li class="active"><a data-toggle="tab" href="#panel-653429">设置性能参数</a>
+						<li class="active"><a data-toggle="tab" href="#panel-978253">配置接口请求</a></li>
+						<li><a data-toggle="tab" href="#panel-653429">设置性能参数</a>
 						</li>
 					</ul>
 					<div class="tab-content">
-						<div class="tab-pane" id="panel-978253">
+						<div class="tab-pane active" id="panel-978253">
 							<form id="form" name="form1" action="" method="post"
 								onsubmit="return submitPlan()">
 								<!-- <h4>配置接口请求</h4> -->
@@ -180,7 +180,7 @@
 
 										<br>
 						</div>
-						<div class="tab-pane active" id="panel-653429">
+						<div class="tab-pane" id="panel-653429">
 							<fieldset>
 								<legend>并发用户数</legend>
 								<input type="radio" name="vuser" value="10"
