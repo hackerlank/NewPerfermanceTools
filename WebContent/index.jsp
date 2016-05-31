@@ -1,21 +1,16 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+	pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh-cn">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <html>
 <head>
-<script type="text/javascript"
-	src="http://www.francescomalagrino.com/BootstrapPageGenerator/3/js/jquery-2.0.0.min.js"></script>
-<script type="text/javascript"
-	src="http://www.francescomalagrino.com/BootstrapPageGenerator/3/js/jquery-ui"></script>
-<link
-	href="http://www.francescomalagrino.com/BootstrapPageGenerator/3/css/bootstrap-combined.min.css"
-	rel="stylesheet" media="screen">
+<script type="text/javascript" src="js/jquery-2.0.0.min.js"></script>
+<script type="text/javascript" src="js/jquery-ui"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="css/bootstrap-combined.min.css"  media="screen">
 <link rel="stylesheet" href="css/common.css">
-<script type="text/javascript"
-	src="http://www.francescomalagrino.com/BootstrapPageGenerator/3/js/bootstrap.min.js"></script>
 </head>
 <title>PerformanceTestPlatform</title>
 <script type="text/javascript">
@@ -106,19 +101,19 @@
 	}
 </script>
 <body>
-	<div class="container-fluid" style="padding: 0px 20px;margin-left: 40px;margin-right: 40px;">
+	<div class="container-fluid"
+		style="padding: 0px 20px; margin-left: 40px; margin-right: 40px; width: 100%">
 		<div class="row-fluid">
 			<div class="span12">
 				<h3 class="text-center">性能自动化测试工具</h3>
 			</div>
 		</div>
 		<div class="row-fluid">
-			<div class="span8">
+			<div class="span8" style="width: 60%">
 				<div class="tabbable" id="tabs-789280">
 					<ul class="nav nav-tabs">
 						<li class="active"><a data-toggle="tab" href="#panel-978253">配置接口请求</a></li>
-						<li><a data-toggle="tab" href="#panel-653429">设置性能参数</a>
-						</li>
+						<li><a data-toggle="tab" href="#panel-653429">设置性能参数</a></li>
 					</ul>
 					<div class="tab-content">
 						<div class="tab-pane active" id="panel-978253">
@@ -155,30 +150,32 @@
 								</fieldset>
 								<br>
 
-									<fieldset>
-										<legend>HTTP Request:</legend>
-										<table>
-											<tr>
-												<td>Path:</td>
-												<td><input type="text" name="path" size="30" value=""></td>
-												<td><span class="help-block">输入接口请求路径</span></td>
-											</tr>
+								<fieldset>
+									<legend>HTTP Request:</legend>
+									<table>
+										<tr>
+											<td>Path:</td>
+											<td><input type="text" name="path" size="30" value=""></td>
+											<td><span class="help-block">输入接口请求路径</span></td>
+										</tr>
 
-											<tr>
-												<td>Method:</td>
-												<td><select name="requestmethod">
-														<option value="get" selected="selected">GET</option>
-														<option value="post">POST</option>
-												</select></td>
-											</tr>
-											<br>
-										</table>
-										Parameters:<br> <textarea name="parameters" value=""></textarea>
-											<span class="help-block">输入接口请求参数</span>
-									</fieldset> <br>
-										<button type="submit" class="btn" onclick="testAPI()">测试接口</button>
-
+										<tr>
+											<td>Method:</td>
+											<td><select name="requestmethod">
+													<option value="get" selected="selected">GET</option>
+													<option value="post">POST</option>
+											</select></td>
+										</tr>
 										<br>
+									</table>
+									Parameters:<br>
+									<textarea name="parameters" value=""></textarea>
+									<span class="help-block">输入接口请求参数</span>
+								</fieldset>
+								<br>
+								<button type="submit" class="btn" onclick="testAPI()">测试接口</button>
+
+								<br>
 						</div>
 						<div class="tab-pane" id="panel-653429">
 							<fieldset>
@@ -197,55 +194,59 @@
 							</fieldset>
 							<br>
 
-								<fieldset>
-									<legend>持续执行时间（秒）</legend>
-									<table>
-										<tr>
-											<td><input type="text" name="duration" size="30"
-												value=""></td>
-											<td><span class="help-block">输入持续执行时间(秒)</span></td>
-										</tr>
+							<fieldset>
+								<legend>持续执行时间（秒）</legend>
+								<table>
+									<tr>
+										<td><input type="text" name="duration" size="30" value=""></td>
+										<td><span class="help-block">输入持续执行时间(秒)</span></td>
+									</tr>
 
-									</table>
+								</table>
 
-								</fieldset> <br>
+							</fieldset>
+							<br>
 
-									<fieldset>
-										<legend>响应断言</legend>
-										<textarea name="assertion"></textarea>
-										<span class="help-block">
-											输入断言的参数结果，即：响应信息中只要包含所填写的参数文本信息，就表示成功。</span>
-									</fieldset> <br /> <br /> <!-- <h4>保存文档</h4> -->
-									<fieldset>
-										<legend>保存测试计划</legend>
-										<table>
-											<tr>
-												<td>测试计划名称<input type="text" name="testplanname"
-													size="30" value=""></td>
-											</tr>
+							<fieldset>
+								<legend>响应断言</legend>
+								<textarea name="assertion"></textarea>
+								<span class="help-block">
+									输入断言的参数结果，即：响应信息中只要包含所填写的参数文本信息，就表示成功。</span>
+							</fieldset>
+							<br /> <br />
+							<!-- <h4>保存文档</h4> -->
+							<fieldset>
+								<legend>保存测试计划</legend>
+								<table>
+									<tr>
+										<td>测试计划名称<input type="text" name="testplanname"
+											size="30" value=""></td>
+									</tr>
 
-											<tr>
-												<td>测试计划描述<input type="text" name="testplandesc"
-													size="30" value=""></td>
-											</tr>
+									<tr>
+										<td>测试计划描述<input type="text" name="testplandesc"
+											size="30" value=""></td>
+									</tr>
 
-											<tr>
-												<td><button type="submit" class="btn"
-														onclick="savePlan()">保存</button></td>
-											</tr>
+									<tr>
+										<td><button type="submit" class="btn"
+												onclick="savePlan()">保存</button></td>
+									</tr>
 
-										</table>
-									</fieldset> <br>
-										<div>
-											<input type="hidden" value="" name="type" id="type">
-										</div> <br /> <br />
-										</form>
+								</table>
+							</fieldset>
+							<br>
+							<div>
+								<input type="hidden" value="" name="type" id="type">
+							</div>
+							<br /> <br />
+							</form>
 						</div>
 					</div>
 				</div>
-				
+
 			</div>
-			<div class="span4">
+			<div class="span4" style="width: 31%">
 				<div class="row-fluid">
 					<div class="span12">
 						<h4>操作日志</h4>

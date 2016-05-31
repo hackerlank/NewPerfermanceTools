@@ -26,7 +26,7 @@ public class JmxParserDom4jHandler {
 	}
 
 	public static void createJmxPlan(String jmxPlanTemple, String jmxPlan, String ip, String port, String path, String method,
-			String parameters, String vuser, String assertion) {
+			String parameters, String vuser, String assertion,String duration) {
 
 		SAXReader saxReader = null;
 		Document doc = null;
@@ -35,7 +35,7 @@ public class JmxParserDom4jHandler {
 			saxReader = new SAXReader();
 			doc = saxReader.read(new File(jmxPlanTemple));
 			stringBuilder.delete(0, stringBuilder.length());
-			stringBuilder.append("开始生成JmxPlan文件......" + "<br>");
+			stringBuilder.append("<p>" + "开始生成JmxPlan文件......" + "</p>" + "<br>");
 
 			// 1、替换 并发用户数 Vuser
 			List<Element> vuserList = doc.selectNodes("/jmeterTestPlan/hashTree/hashTree/ThreadGroup/stringProp");
@@ -44,7 +44,19 @@ public class JmxParserDom4jHandler {
 				Element vuserEle = iter.next();
 				if (vuserEle.attribute("name").getValue().equals("ThreadGroup.num_threads")) {
 					vuserEle.setText(vuser);
-					stringBuilder.append("设置 ThreadGroup.num_threads: \"" + vuserEle.getText() + " \"......" + "<br>");
+					stringBuilder.append("<p>" + "设置 ThreadGroup.num_threads: \"" + vuserEle.getText() + " \"......" + "</p>" + "<br>");
+
+				}
+			}
+			
+			// 1、替换 持续时间 duration
+			List<Element> durationList = doc.selectNodes("/jmeterTestPlan/hashTree/hashTree/ThreadGroup/stringProp");
+			Iterator<Element> durationListIter = durationList.iterator();
+			while (durationListIter.hasNext()) {
+				Element durationEle = durationListIter.next();
+				if (durationEle.attribute("name").getValue().equals("ThreadGroup.duration")) {
+					durationEle.setText(duration);
+					stringBuilder.append("<p>" + "设置 ThreadGroup.duration: \"" + durationEle.getText() + " \"......" + "</p>" + "<br>");
 
 				}
 			}
@@ -57,7 +69,7 @@ public class JmxParserDom4jHandler {
 				Element args = httpRequestArgsIter.next();
 				if (args.attribute("name").getValue().equals("Argument.value")) {
 					args.setText(parameters);
-					stringBuilder.append("设置 Argument.value: \"" + args.getText() + " \"......" + "<br>");
+					stringBuilder.append("<p>" + "设置 Argument.value: \"" + args.getText() + " \"......" + "</p>" + "<br>");
 				}
 			}
 
@@ -71,22 +83,22 @@ public class JmxParserDom4jHandler {
 
 				case "HTTPSampler.domain":
 					httpServer.setText(ip);
-					stringBuilder.append("设置 HTTPSampler.domain: \"" + httpServer.getText() + " \"......" + "<br>");
+					stringBuilder.append("<p>" + "设置 HTTPSampler.domain: \"" + httpServer.getText() + " \"......" + "</p>" + "<br>");
 					break;
 
 				case "HTTPSampler.port":
 					httpServer.setText(port);
-					stringBuilder.append("设置 HTTPSampler.port: \"" + httpServer.getText() + " \"......" + "<br>");
+					stringBuilder.append("<p>" + "设置 HTTPSampler.port: \"" + httpServer.getText() + " \"......" + "</p>" + "<br>");
 					break;
 
 				case "HTTPSampler.path":
 					httpServer.setText(path);
-					stringBuilder.append("设置 HTTPSampler.path: \"" + httpServer.getText() + " \"......" + "<br>");
+					stringBuilder.append("<p>" + "设置 HTTPSampler.path: \"" + httpServer.getText() + " \"......" + "</p>" + "<br>");
 					break;
 
 				case "HTTPSampler.method":
 					httpServer.setText(method);
-					stringBuilder.append("设置 HTTPSampler.method: \"" + httpServer.getText() + " \"......" + "<br>");
+					stringBuilder.append("<p>" + "设置 HTTPSampler.method: \"" + httpServer.getText() + " \"......" + "</p>" + "<br>");
 					break;
 
 				default:
@@ -101,7 +113,7 @@ public class JmxParserDom4jHandler {
 			while (httpRequestAssertionIter.hasNext()) {
 				Element assertionEle = httpRequestAssertionIter.next();
 				assertionEle.setText(assertion);
-				stringBuilder.append("设置 Asserion.test_strings: \"" + assertionEle.getText() + " \"......" + "<br>");
+				stringBuilder.append("<p>" + "设置 Asserion.test_strings: \"" + assertionEle.getText() + " \"......" + "</p>" + "<br>");
 			}
 
 		} catch (DocumentException e) {
@@ -112,8 +124,8 @@ public class JmxParserDom4jHandler {
 			FileWriter fileWriter = new FileWriter(new File(jmxPlan));
 			XMLWriter xmlWriter = new XMLWriter(fileWriter);
 			xmlWriter.write(doc);
-			stringBuilder.append("jmxplan 计划文件已生成完毕。" + "<br>");
-			stringBuilder.append("文件地址： " + new File(jmxPlan).getAbsolutePath() + "<br>");
+			stringBuilder.append("<p>" + "jmxplan 计划文件已生成完毕。" + "</p>" + "<br>");
+			stringBuilder.append("<p>" + "文件地址： " + "<a href=\"" + new File(jmxPlan).getAbsolutePath() +"\">"+ new File(jmxPlan).getAbsolutePath() + "</p>" + "<br>");
 			xmlWriter.close();
 
 		} catch (IOException e) {

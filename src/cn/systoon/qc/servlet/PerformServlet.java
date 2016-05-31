@@ -13,8 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.utils.HttpClientUtils;
 
-import cn.systoon.qc.jmxhandler.HttpClientUtil;
 import cn.systoon.qc.jmxhandler.JmxParserDom4jHandler;
+import cn.systoon.qc.utils.HttpClientUtil;
 
 /**
  * Servlet implementation class PerformServlet
@@ -35,6 +35,7 @@ public class PerformServlet extends HttpServlet {
     String vuser = "";
     String assertion = "";
     String methodName = "";
+    String duration = "";
     String url = "";
     String jmxPlanTemple = "/Users/perfermance/JmeterTest/script/jmxPlanTemple.jmx";
 	private boolean flag = false;
@@ -118,7 +119,7 @@ public class PerformServlet extends HttpServlet {
 			response.setCharacterEncoding("UTF-8");
 			response.getWriter().print(HttpClientUtil.getStringBuilder().toString());
 		}else{
-			JmxParserDom4jHandler.createJmxPlan(jmxPlanTemple, jmxPlan, ip, port, path, requestMethod, parameters, vuser, assertion);
+			JmxParserDom4jHandler.createJmxPlan(jmxPlanTemple, jmxPlan, ip, port, path, requestMethod, parameters, vuser, assertion,duration);
 			response.setCharacterEncoding("UTF-8");
 			response.getWriter().print(JmxParserDom4jHandler.getStringBuilder().toString());
 		}

@@ -1,4 +1,4 @@
-package cn.systoon.qc.jmxhandler;
+package cn.systoon.qc.utils;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -39,68 +39,18 @@ public class HttpClientUtil {
 	        s.setContentType("application/json");//发送json数据需要设置contentType
             httppost.setEntity(s);  
 			stringBuilder.delete(0, stringBuilder.length());
-			stringBuilder.append("请求地址：" + "<br>");
-			stringBuilder.append(httppost.getURI() + "<br>");
+			stringBuilder.append("<p>" + "请求地址：" + "</p>" + "<br>");
+			stringBuilder.append("<p>" + httppost.getURI() + "</p>" + "<br>");
 			CloseableHttpResponse response = httpclient.execute(httppost);
 			try {
 				HttpEntity entity = response.getEntity();
 				if (entity != null) {
-					stringBuilder.append("服务响应：" + "<br>");
-					stringBuilder.append(response.getStatusLine());
+					stringBuilder.append("<p>" + "服务响应："  + "</p>" + "<br>");
+					stringBuilder.append("<p>" + response.getStatusLine() + "</p>" );
 					stringBuilder.append("<br>");
 					stringBuilder.append("--------------------------------------");
 					stringBuilder.append("<br>");
-					stringBuilder.append("Response content: <br>" + "<textarea id=\"content\">" + EntityUtils.toString(entity, "UTF-8") + "</textarea>");
-					stringBuilder.append("<br>");
-					stringBuilder.append("--------------------------------------");
-					if(response.getStatusLine().getStatusCode() >= 200 || response.getStatusLine().getStatusCode() < 304){
-						flag = true;
-					}else{
-						flag = false;
-					}
-				}
-			} finally {
-				response.close();
-			}
-        } catch (ClientProtocolException e) {  
-            e.printStackTrace();  
-        } catch (UnsupportedEncodingException e1) {  
-            e1.printStackTrace();  
-        } catch (IOException e) {  
-            e.printStackTrace();  
-        } finally {  
-            // 关闭连接,释放资源    
-            try {  
-                httpclient.close();  
-            } catch (IOException e) {  
-                e.printStackTrace();  
-            }  
-        }
-		return flag;  
-    }
-
-	/**
-	 * 发送 get请求
-	 * @return 
-	 */
-	public static boolean get(String url) {
-		CloseableHttpClient httpclient = HttpClients.createDefault();
-		try {
-			// 创建httpget.
-			HttpGet httpget = new HttpGet(url);
-			// 执行get请求.
-			stringBuilder.delete(0, stringBuilder.length());
-			stringBuilder.append("<p>" + "请求地址 " + httpget.getURI() + "<p>");
-			CloseableHttpResponse response = httpclient.execute(httpget);
-			try {
-				HttpEntity entity = response.getEntity();
-				if (entity != null) {
-					stringBuilder.append("服务响应：" + "<br>");
-					stringBuilder.append(response.getStatusLine());
-					stringBuilder.append("<br>");
-					stringBuilder.append("--------------------------------------");
-					stringBuilder.append("<br>");
-					stringBuilder.append("Response content: <br>" + "<textarea id=\"content\">" + EntityUtils.toString(entity, "UTF-8") + "</textarea>");
+					stringBuilder.append("<p>" + "Response content: <br>"  + "</p>" + "<textarea id=\"content\">" + EntityUtils.toString(entity, "UTF-8") + "</textarea>");
 					stringBuilder.append("<br>");
 					stringBuilder.append("--------------------------------------");
 					if(response.getStatusLine().getStatusCode() >= 200 || response.getStatusLine().getStatusCode() < 304){
@@ -115,7 +65,56 @@ public class HttpClientUtil {
 		} catch (Exception e) {
 			flag = false;
 			stringBuilder.append("--------------------------------------" + "<br>");
-			stringBuilder.append("请求失败" + "<br>");
+			stringBuilder.append("<p>" + "请求失败" + "</p>" + "<br>");
+			e.printStackTrace();
+		} finally {
+			// 关闭连接,释放资源
+			try {
+				httpclient.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return flag;  
+    }
+
+	/**
+	 * 发送 get请求
+	 * @return 
+	 */
+	public static boolean get(String url) {
+		CloseableHttpClient httpclient = HttpClients.createDefault();
+		try {
+			// 创建httpget.
+			HttpGet httpget = new HttpGet(url);
+			// 执行get请求.
+			stringBuilder.delete(0, stringBuilder.length());
+			stringBuilder.append("<p>" + "请求地址 " + httpget.getURI() + "</p>");
+			CloseableHttpResponse response = httpclient.execute(httpget);
+			try {
+				HttpEntity entity = response.getEntity();
+				if (entity != null) {
+					stringBuilder.append("<p>" + "服务响应：" + "</p>" + "<br>");
+					stringBuilder.append("<p>" + response.getStatusLine() + "</p>");
+					stringBuilder.append("<br>");
+					stringBuilder.append("--------------------------------------");
+					stringBuilder.append("<br>");
+					stringBuilder.append("<p>" + "Response content: <br>"  + "</p>" + "<textarea id=\"content\">" + EntityUtils.toString(entity, "UTF-8") + "</textarea>");
+					stringBuilder.append("<br>");
+					stringBuilder.append("--------------------------------------");
+					if(response.getStatusLine().getStatusCode() >= 200 || response.getStatusLine().getStatusCode() < 304){
+						flag = true;
+					}else{
+						flag = false;
+					}
+				}
+			} finally {
+				response.close();
+			}
+		} catch (Exception e) {
+			flag = false;
+			stringBuilder.append("--------------------------------------" + "<br>");
+			stringBuilder.append("<p>" + "请求失败" + "</p>" + "<br>");
 			e.printStackTrace();
 		} finally {
 			// 关闭连接,释放资源
