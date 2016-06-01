@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.utils.HttpClientUtils;
 
@@ -38,6 +39,9 @@ public class PerformServlet extends HttpServlet {
     String duration = "";
     String url = "";
     String jmxPlanTemple = "/Users/perfermance/JmeterTest/script/jmxPlanTemple.jmx";
+    String jmxPlan = "";
+    String jmxPlanPath = "/Users/perfermance/JmeterTest/script/";
+    String descript = "";
 	private boolean flag = false;
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -51,8 +55,11 @@ public class PerformServlet extends HttpServlet {
 		requestMethod = request.getParameter("requestmethod");
 		vuser = request.getParameter("vuser");
 		assertion = request.getParameter("assertion");
+		duration = request.getParameter("duration");
+		jmxPlan = request.getParameter("testplanname");
+		descript = request.getParameter("testplandesc");
 		methodName=request.getParameter("method");
-		if(port == ""){
+		if(StringUtils.isBlank(port)){
 			port = "80";
 		}
 		url = "http://" + ip + ":" + port + path;
@@ -64,6 +71,9 @@ public class PerformServlet extends HttpServlet {
 		System.out.println("requestMethod：" + requestMethod);
 		System.out.println("vuser：" + vuser);
 		System.out.println("assertion：" + assertion);
+		System.out.println("duration：" + duration);
+		System.out.println("jmxPlan：" + jmxPlan);
+		System.out.println("descript：" + descript);
 		System.out.println("methodName：" + methodName);
 		System.out.println("url：" + url);
 		
@@ -79,7 +89,7 @@ public class PerformServlet extends HttpServlet {
 	protected void test(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		if(requestMethod.equals("get")){
-			if(parameters != ""){
+			if(StringUtils.isNotBlank(parameters)){
 				HttpClientUtil.get(url + "?" + parameters);
 			}else{
 				HttpClientUtil.get(url);
@@ -93,18 +103,20 @@ public class PerformServlet extends HttpServlet {
 	}
 	
 	protected void save(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String jmxPlan = null;
-		if(path != ""){
-			jmxPlan = "/Users/perfermance/JmeterTest/script/" + path.substring(1, path.length()).replace('/', '_') + "_" + vuser + ".jmx";
+		if(StringUtils.isBlank(jmxPlan)){
+			if(StringUtils.isNotBlank(path)){
+				jmxPlan = jmxPlanPath + path.substring(1, path.length()).replace('/', '_') + "_" + vuser + ".jmx";
+			}else{
+				jmxPlan = jmxPlanPath + System.currentTimeMillis() + ".jmx";
+			}
 		}else{
-			jmxPlan = System.currentTimeMillis() + ".jmx";
+			jmxPlan = jmxPlanPath + jmxPlan + ".jmx";
 		}
 		
 		if(requestMethod.equals("get")){
-			if(parameters != ""){
+			if(StringUtils.isNotBlank(parameters)){
 				flag = HttpClientUtil.get(url + "?" + parameters);
 			}else{
-				System.out.println("2222");
 				flag = HttpClientUtil.get(url);
 			}
 		}else if(requestMethod.equals("post")){
