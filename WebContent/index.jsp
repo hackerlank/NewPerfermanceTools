@@ -1,174 +1,116 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<!-- <html xmlns="http://www.w3.org/1999/xhtml" lang="zh-cn"> -->
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <script type="text/javascript" src="js/jquery-2.0.0.min.js"></script>
-<script type="text/javascript" src="js/jquery-ui.js"></script>
+<script type="text/javascript" src="js/jquery-ui"></script>
 <script type="text/javascript" src="js/bootstrap.min.js"></script>
-<script type="text/javascript" src="js/my.js"></script>
-<link rel="stylesheet" href="css/bootstrap-combined.min.css"
-	media="screen" />
-<link rel="stylesheet" href="css/common.css" />
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>PerformanceTestPlatform</title>
-
+<link href="css/bootstrap-combined.min.css" rel="stylesheet" media="screen">
+<link href="css/common.css" rel="stylesheet" media="screen">
+<title>Insert title here</title>
+<style>
+	.container{
+		max-width: 80%;
+	}
+</style>
+<script type="text/javascript">
+	$(function(){
+		$("#editbtn").hover(function(){
+			$("#run").css("display","none");
+			$("#report").css("display","none");
+			$("#edit").css("display","block");
+		 });
+		
+		$("#runbtn").hover(function(){
+			$("#edit").css("display","none");
+			$("#report").css("display","none");
+			$("#run").css("display","block");
+		 });
+		
+		$("#reportbtn").hover(function(){
+			$("#run").css("display","none");
+			$("#edit").css("display","none");
+			$("#report").css("display","block");
+		 });
+	});
+</script>
 </head>
 <body>
-	<div id="container" class="container-fluid"
-		style="padding: 0px 20px; margin: 0 auto">
-		<div class="row-fluid">
-			<div class="span12">
-				<h3 class="text-center">创建编辑测试计划</h3>
-			</div>
-		</div>
-		<div class="row-fluid">
-			<div class="span8">
-				<form id="form" name="form1" action="" method="post"
-					onsubmit="return submitPlan()">
-					<div class="tabbable" id="tabs-789280">
-						<ul class="nav nav-tabs">
-							<li class="active"><a data-toggle="tab" href="#panel-978253">配置接口请求</a></li>
-							<li><a data-toggle="tab" href="#panel-653429">设置性能参数</a></li>
-						</ul>
-						<div class="tab-content">
-							<div class="tab-pane active" id="panel-978253">
-								<!-- <h4>配置接口请求</h4> -->
-								<fieldset>
-									<legend>Web Server:</legend>
-									<table>
-										<tr>
-											<td>Project Name:</td>
-											<td><select name="warname">
-													<option value="">请选择项目名称</option>
-													<option value="businessAPi">businessAPi</option>
-													<option value="Author">Author</option>
-
-											</select></td>
-										</tr>
-
-										<tr>
-											<td>Server Name or IP:</td>
-											<td><input type="text" name="ip" size="30" value="" /></td>
-										</tr>
-
-										<tr>
-											<td>Port Number:</td>
-											<td><input type="text" name="port" size="30" value="" /></td>
-										</tr>
-
-									</table>
-
-								</fieldset>
-								<br />
-								<fieldset>
-									<legend>HTTP Request:</legend>
-									<table>
-										<tr>
-											<td>Path:</td>
-											<td><input type="text" name="path" size="30" value="" /></td>
-											<td><span class="help-block">输入接口请求路径</span></td>
-										</tr>
-
-										<tr>
-											<td>Method:</td>
-											<td><select name="requestmethod">
-													<option value="get" selected="selected">GET</option>
-													<option value="post">POST</option>
-											</select></td>
-										</tr>
-									</table>
-									Parameters:<br />
-									<textarea class="textdefine" name="parameters"></textarea>
-									<span class="help-block">输入接口请求参数</span>
-								</fieldset>
-								<br />
-								<button type="submit" class="btn" onclick="testAPI()">测试接口</button>
-								<br />
+<div id="container" class="container-fluid" style="padding: 0px 20px; margin: 0 auto">
+<jsp:include page="html/header.jsp"></jsp:include>
+	<div class="row-fluid">
+		<div class="span12">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+						<h1 class="page-header">
+							性能自动化测试工具
+						</h1>
+						<div class="row placeholders">
+							<div id="editbtn" class="col-xs-6 col-sm-3 placeholder">
+								<a href="html/addTestPlan.jsp"><img alt="200x200" class="img-responsive" src="svg/edit.svg" /></a>
+								<h4>
+									编辑测试计划
+								</h4> <span class="text-muted">创建、修改测试计划</span>
 							</div>
-							<div class="tab-pane" id="panel-653429">
-								<fieldset>
-									<legend>并发用户数</legend>
-									<input type="radio" name="vuser" value="10"
-										onclick="Change('0')" checked="checked" />10 <input
-										type="radio" name="vuser" value="50" onclick="Change('0')" />50
-									<input type="radio" name="vuser" value="100"
-										onclick="Change('0')" />100 <input type="radio" name="vuser"
-										value="200" onclick="Change('0')" />200 <input type="radio"
-										name="vuser" value="500" onclick="Change('0')" />500 <input
-										type="radio" name="vuser" value="1000" onclick="Change('0')" />1000
-									<input id="define" type="radio" name="vuser"
-										onclick="Change('1')" />自定义<input id="defineValue"
-										type="hidden" name="vuser" size="30" onchange="assignValue()" />
-								</fieldset>
-								<br/>
-								<fieldset>
-									<legend>持续执行时间（秒）</legend>
-									<table>
-										<tr>
-											<td><input type="text" name="duration" size="30"
-												value="300" /></td>
-											<td><span class="help-block">默认执行5分钟</span></td>
-										</tr>
-									</table>
-								</fieldset>
-
-								<fieldset>
-									<legend>响应断言</legend>
-									<textarea class="textdefine" name="assertion"></textarea>
-									<div class="alert">
-										<button type="button" class="close" data-dismiss="alert">×</button>
-										<strong>提示</strong> 输入断言的参数结果，即：响应信息中只要包含所填写的参数文本信息，就表示成功。
-									</div>
-								</fieldset>
-								<!-- <h4>保存文档</h4> -->
-								<fieldset>
-									<legend>保存测试计划</legend>
-									<table>
-										<tr>
-											<td>测试计划名称：<input type="text" name="testplanname"
-												size="30" value="" /></td>
-										</tr>
-
-										<tr>
-											<td>测试计划描述：<input type="text" name="testplandesc"
-												size="30" value="" /></td>
-										</tr>
-
-										<tr>
-											<td><button type="submit" class="btn"
-													onclick="savePlan()">保存</button></td>
-										</tr>
-
-									</table>
-								</fieldset>
-								<br />
-								<div>
-									<input type="hidden" value="" name="type" id="type" />
-								</div>
+							<div id="runbtn"class="col-xs-6 col-sm-3 placeholder">
+								<a href="html/runTest.jsp"><img alt="200x200" class="img-responsive" src="svg/run.svg" /></a>
+								<h4>
+									执行测试
+								</h4> <span class="text-muted">执行已有测试计划</span>
+							</div>
+							<div id="reportbtn"class="col-xs-6 col-sm-3 placeholder">
+								<a href="html/historyResult.jsp"><img alt="200x200" class="img-responsive" src="svg/report.svg" /></a>
+								<h4>
+									查看测试结果
+								</h4><span class="text-muted">查看性能测试历史结果</span>
+							</div>
+							<div class="col-xs-6 col-sm-3 placeholder">
 							</div>
 						</div>
 					</div>
-				</form>
-			</div>
-			<div class="span4">
-				<div class="tabbable" id="tabs-174529">
-					<ul class="nav nav-tabs">
-						<li class="active"><a href="#panel-913764" data-toggle="tab">操作日志</a>
-						</li>
-					</ul>
-				</div>
-				<div class="tab-content">
-					<div class="tab-pane active" id="panel-913764">
-						<fieldset>
-							<legend>console</legend>
-							<div id="console"></div>
-						</fieldset>
-					</div>
 				</div>
 			</div>
+
+			<div id="edit" class="hero-unit" style="display: block">
+				<h1>
+					创建计划
+				</h1><br>
+				<p>
+					通过该模块，创建待测接口的性能测试计划。根据页面提示，填写指定内容，后台将自动生成用于jmeter执行的测试计划。
+				</p>
+				<p>
+					测试计划可在该平台直接执行测试，也可下载后，通过本地jmeter工具执行。
+				</p>
+			</div>
+			
+			<div id="run" class="hero-unit" style="display: none">
+				<h1>
+					执行测试
+				</h1><br>
+				<p>
+					选择项目，指定该项目中已有的测试计划，执行性能测试，得到测试结果。
+				</p>
+				<p>
+					适用场景，对于已生成的测试计划，修改代码后，多次相同的测试计划，比较测试结果，衡量代码修改的效率。
+				</p>
+			</div>
+			
+			<div id="report" class="hero-unit" style="display: none">
+				<h1>
+					查看历史测试结果
+				</h1><br>
+				<p>
+					在该模块中可查看在该平台执行过的所有测试计划生成的测试结果。
+				</p>
+			</div>
+
 		</div>
 	</div>
+
+
+</div>
 </body>
 </html>
