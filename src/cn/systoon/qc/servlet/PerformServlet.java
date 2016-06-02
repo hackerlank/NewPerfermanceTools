@@ -1,7 +1,6 @@
 package cn.systoon.qc.servlet;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.lang.reflect.Method;
 
 import javax.servlet.ServletException;
@@ -11,8 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.utils.HttpClientUtils;
 
 import cn.systoon.qc.jmxhandler.JmxParserDom4jHandler;
 import cn.systoon.qc.utils.HttpClientUtil;

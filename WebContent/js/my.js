@@ -69,9 +69,9 @@ function Change(obj) {
 	function submitPlan() {
 		var url;
 		if (document.getElementById("type").value == "save") {
-			url = "performServlet?method=save";
+			url = "../performServlet?method=save";
 		} else if (document.getElementById("type").value == "test") {
-			url = "performServlet?method=test";
+			url = "../performServlet?method=test";
 		}
 		if (checkEmpty()) {
 			$.ajax({

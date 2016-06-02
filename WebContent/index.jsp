@@ -9,7 +9,7 @@
 <script type="text/javascript" src="js/bootstrap.min.js"></script>
 <link href="css/bootstrap-combined.min.css" rel="stylesheet" media="screen">
 <link href="css/common.css" rel="stylesheet" media="screen">
-<title>Insert title here</title>
+<title>index</title>
 <style>
 	.container{
 		max-width: 80%;
@@ -38,8 +38,35 @@
 </script>
 </head>
 <body>
+<!-- 导航开始 -->
+<div class="container-fluid">
+	<div class="row-fluid">
+		<div class="span12">
+			<div class="navbar">
+				<div class="navbar-inner">
+					<div class="container-fluid">
+						<a href="#" class="brand"><img src="<%= request.getContextPath() %>/img/syswin.png"></a>
+						<div class="nav-collapse collapse navbar-responsive-collapse">
+							<ul class="nav pull-right">
+								<li><a href="<%= request.getContextPath() %>/index.jsp">主页</a></li>
+								<li class="divider-vertical"></li>
+								<li class="dropdown"><a data-toggle="dropdown"
+									class="dropdown-toggle" href="#">快速导航<strong class="caret"></strong></a>
+									<ul class="dropdown-menu">
+										<li><a href="<%= request.getContextPath() %>/html/edit.jsp">创建测试计划</a></li>
+										<li><a href="<%= request.getContextPath() %>/html/run.jsp">执行测试</a></li>
+										<li><a href="<%= request.getContextPath() %>/html/report.jsp">查看历史结果</a></li>
+									</ul></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- 导航end -->
 <div id="container" class="container-fluid" style="padding: 0px 20px; margin: 0 auto">
-<jsp:include page="html/header.jsp"></jsp:include>
 	<div class="row-fluid">
 		<div class="span12">
 			<div class="container-fluid">
@@ -50,19 +77,19 @@
 						</h1>
 						<div class="row placeholders">
 							<div id="editbtn" class="col-xs-6 col-sm-3 placeholder">
-								<a href="html/addTestPlan.jsp"><img alt="200x200" class="img-responsive" src="svg/edit.svg" /></a>
+								<a href="html/edit.jsp"><img alt="200x200" class="img-responsive" src="svg/edit.svg" /></a>
 								<h4>
 									编辑测试计划
 								</h4> <span class="text-muted">创建、修改测试计划</span>
 							</div>
 							<div id="runbtn"class="col-xs-6 col-sm-3 placeholder">
-								<a href="html/runTest.jsp"><img alt="200x200" class="img-responsive" src="svg/run.svg" /></a>
+								<a href="html/run.jsp"><img alt="200x200" class="img-responsive" src="svg/run.svg" /></a>
 								<h4>
 									执行测试
 								</h4> <span class="text-muted">执行已有测试计划</span>
 							</div>
 							<div id="reportbtn"class="col-xs-6 col-sm-3 placeholder">
-								<a href="html/historyResult.jsp"><img alt="200x200" class="img-responsive" src="svg/report.svg" /></a>
+								<a href="html/report.jsp"><img alt="200x200" class="img-responsive" src="svg/report.svg" /></a>
 								<h4>
 									查看测试结果
 								</h4><span class="text-muted">查看性能测试历史结果</span>
