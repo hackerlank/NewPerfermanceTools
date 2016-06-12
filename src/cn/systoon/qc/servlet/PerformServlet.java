@@ -2,6 +2,7 @@ package cn.systoon.qc.servlet;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,6 +12,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import cn.systoon.qc.dao.impl.ServiceListDAOImpl;
+import cn.systoon.qc.domain.ServiceList;
 import cn.systoon.qc.jmxhandler.JmxParserDom4jHandler;
 import cn.systoon.qc.utils.HttpClientUtil;
 
@@ -59,20 +64,20 @@ public class PerformServlet extends HttpServlet {
 		if(StringUtils.isBlank(port)){
 			port = "80";
 		}
-		url = "http://" + ip + ":" + port + path;
-		
-		System.out.println("ip：" + ip);
-		System.out.println("port：" + port);
-		System.out.println("path：" + path);
-		System.out.println("parameters：" + parameters);
-		System.out.println("requestMethod：" + requestMethod);
-		System.out.println("vuser：" + vuser);
-		System.out.println("assertion：" + assertion);
-		System.out.println("duration：" + duration);
-		System.out.println("jmxPlan：" + jmxPlan);
-		System.out.println("descript：" + descript);
-		System.out.println("methodName：" + methodName);
-		System.out.println("url：" + url);
+//		url = "http://" + ip + ":" + port + path;
+//		
+//		System.out.println("ip：" + ip);
+//		System.out.println("port：" + port);
+//		System.out.println("path：" + path);
+//		System.out.println("parameters：" + parameters);
+//		System.out.println("requestMethod：" + requestMethod);
+//		System.out.println("vuser：" + vuser);
+//		System.out.println("assertion：" + assertion);
+//		System.out.println("duration：" + duration);
+//		System.out.println("jmxPlan：" + jmxPlan);
+//		System.out.println("descript：" + descript);
+//		System.out.println("methodName：" + methodName);
+//		System.out.println("url：" + url);
 		
 		try {
 			Method method = getClass().getDeclaredMethod(methodName, HttpServletRequest.class,HttpServletResponse.class);
@@ -132,6 +137,26 @@ public class PerformServlet extends HttpServlet {
 			response.setCharacterEncoding("UTF-8");
 			response.getWriter().print(JmxParserDom4jHandler.getStringBuilder().toString());
 		}
+		
+	}
+	
+	protected void edit(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		ServiceListDAOImpl serviceListDAOImpl = new ServiceListDAOImpl();
+		List<ServiceList> serviceLists = serviceListDAOImpl.getAll();
+		request.setAttribute("serviceLists", serviceLists);
+		request.getRequestDispatcher("/html/edit.jsp").forward(request, response);
+		
+	}
+	
+	protected void getServiceIp(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String id = request.getParameter("id");
+		ServiceListDAOImpl serviceListDAOImpl = new ServiceListDAOImpl();
+		ServiceList servicelist = serviceListDAOImpl.getServiceById(id);
+		ObjectMapper mapper = new ObjectMapper();
+		String result = mapper.writeValueAsString(servicelist);
+//		System.out.println("*******************" + result);
+		response.getWriter().println(result);
+		
 		
 	}
 	

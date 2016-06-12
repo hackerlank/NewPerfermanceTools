@@ -4,11 +4,9 @@ import java.util.List;
 
 import cn.systoon.qc.dao.ApiInfoDAO;
 import cn.systoon.qc.dao.DAO;
-import cn.systoon.qc.dao.TestPlanDAO;
 import cn.systoon.qc.domain.ApiInfo;
-import cn.systoon.qc.domain.TestPlan;
 
-public class ApiInfoDAOimpl extends DAO implements ApiInfoDAO {
+public class ApiInfoDAOImpl extends DAO<ApiInfo> implements ApiInfoDAO {
 
 	@Override
 	public ApiInfo get(Integer id) {

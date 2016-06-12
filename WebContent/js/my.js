@@ -71,7 +71,8 @@ function Change(obj) {
 		if (document.getElementById("type").value == "save") {
 			url = "../performServlet?method=save";
 		} else if (document.getElementById("type").value == "test") {
-			url = "../performServlet?method=test";
+//			url = "../performServlet?method=test";
+			url = "../performServlet?method=getServiceIp";
 		}
 		if (checkEmpty()) {
 			$.ajax({
@@ -91,3 +92,28 @@ function Change(obj) {
 		}
 		return false;
 	}
+	
+function changeIp(){
+	$("#warname").change(function() {
+		var serviceId = $(this).val();
+		if (serviceId != null) {
+			var url = "/performServlet?method=getServiceIp";
+			var args = {
+				"id" : serviceId
+			};
+
+			$.getJSON(url, args, function(data) {
+				if (data.length == 0) {
+					alert("请输入IP地址，端口号");
+				} else {
+					for (var i = 0; i < data.length; i++) {
+						var serviceIp = data[i].pressip;
+						$("#ip").val(serviceIp);
+					}
+				}
+			});
+		}
+
+	});
+}
+	

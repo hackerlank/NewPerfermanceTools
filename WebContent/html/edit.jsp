@@ -1,50 +1,56 @@
+<%@page import="org.apache.commons.lang.StringUtils"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@page import="java.util.List"%>
+<%@page import="cn.systoon.qc.domain.ServiceList"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- <html xmlns="http://www.w3.org/1999/xhtml" lang="zh-cn"> -->
 <html>
 <head>
-<script type="text/javascript" src="../js/jquery-2.0.0.min.js"></script>
-<script type="text/javascript" src="../js/jquery-ui.js"></script>
-<script type="text/javascript" src="../js/bootstrap.min.js"></script>
-<script type="text/javascript" src="../js/my.js"></script>
-<link rel="stylesheet" href="../css/bootstrap-combined.min.css"
+<script type="text/javascript"
+	src="<%=request.getContextPath()%>/js/jquery-2.0.0.min.js"></script>
+<script type="text/javascript"
+	src="<%=request.getContextPath()%>/js/jquery-ui.js"></script>
+<script type="text/javascript"
+	src="<%=request.getContextPath()%>/js/jquery-1.7.2.js"></script>
+<script type="text/javascript"
+	src="<%=request.getContextPath()%>/js/bootstrap.min.js"></script>
+<script type="text/javascript"
+	src="<%=request.getContextPath()%>/js/my.js"></script>
+<link rel="stylesheet"
+	href="<%=request.getContextPath()%>/css/bootstrap-combined.min.css"
 	media="screen" />
-<link rel="stylesheet" href="../css/common.css" />
+<link rel="stylesheet"
+	href="<%=request.getContextPath()%>/css/common.css" />
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>edit</title>
+<script type="text/javascript">
+	$(function(){
+		$("#warname").change(function() {
+			var serviceId = $(this).val();
+			if (serviceId != null) {
+				var url = "performServlet?method=getServiceIp";
+				var args = {
+					"id" : serviceId
+				};
+
+				$.getJSON(url,args,function(data){
+					if(data.prdomain != null){
+						$("#ip").val(data.prdomain);
+					}else{
+						$("#ip").val(data.pressIp);
+					}
+				});
+			}
+
+		});
+	})
+</script>
 
 </head>
 <body>
-<!-- 导航开始 -->
-<div class="container-fluid">
-	<div class="row-fluid">
-		<div class="span12">
-			<div class="navbar">
-				<div class="navbar-inner">
-					<div class="container-fluid">
-						<a href="#" class="brand"><img src="<%= request.getContextPath() %>/img/syswin.png"></a>
-						<div class="nav-collapse collapse navbar-responsive-collapse">
-							<ul class="nav pull-right">
-								<li><a href="<%= request.getContextPath() %>/index.jsp">主页</a></li>
-								<li class="divider-vertical"></li>
-								<li class="dropdown"><a data-toggle="dropdown"
-									class="dropdown-toggle" href="#">快速导航<strong class="caret"></strong></a>
-									<ul class="dropdown-menu">
-										<li><a href="<%= request.getContextPath() %>/html/edit.jsp">创建测试计划</a></li>
-										<li><a href="<%= request.getContextPath() %>/html/run.jsp">执行测试</a></li>
-										<li><a href="<%= request.getContextPath() %>/html/report.jsp">查看历史结果</a></li>
-									</ul></li>
-							</ul>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
-<!-- 导航end -->
-<div id="container" class="container-fluid"
+	<%@include file="/html/header.jspf"%>
+	<div id="container" class="container-fluid"
 		style="padding: 0px 20px; margin: 0 auto">
 		<div class="row-fluid">
 			<div class="span12">
@@ -68,22 +74,42 @@
 									<table>
 										<tr>
 											<td>Project Name:</td>
-											<td><select name="warname">
+											<td><select id="warname" name="warname">
 													<option value="">请选择项目名称</option>
-													<option value="businessAPi">businessAPi</option>
-													<option value="Author">Author</option>
+												    <% 			
+															List<ServiceList> serviceLists = null;
+															if(session.getAttribute("serviceLists")!=null){
+																serviceLists = (List<ServiceList>)session.getAttribute("serviceLists");
+															}else{
+																serviceLists = (List<ServiceList>) request.getAttribute("serviceLists");
+																session.setAttribute("serviceLists", serviceLists);
+															}
+															if (serviceLists != null && serviceLists.size() > 0) {
+																for (ServiceList serviceList : serviceLists) {
+																	if (StringUtils.isNotBlank(serviceList.getProjectCN())){
+													%>
+													<option value="<%=serviceList.getId()%>"><%=serviceList.getProjectCN()%></option>
+													
+													<%
+																}
+															}
+														}
 
+													%>
+													
 											</select></td>
 										</tr>
-
+										
 										<tr>
 											<td>Server Name or IP:</td>
-											<td><input type="text" name="ip" size="30" value="" /></td>
+											<td><input id="ip" type="text" name="ip" size="30"
+												value="" /></td>
 										</tr>
 
 										<tr>
 											<td>Port Number:</td>
-											<td><input type="text" name="port" size="30" value="" /></td>
+											<td><input id="port" type="text" name="port" size="30"
+												value="" /></td>
 										</tr>
 
 									</table>
@@ -130,7 +156,7 @@
 										onclick="Change('1')" />自定义<input id="defineValue"
 										type="hidden" name="vuser" size="30" onchange="assignValue()" />
 								</fieldset>
-								<br/>
+								<br />
 								<fieldset>
 									<legend>持续执行时间（秒）</legend>
 									<table>
@@ -197,6 +223,6 @@
 				</div>
 			</div>
 		</div>
-	</div> 
+	</div>
 </body>
 </html>

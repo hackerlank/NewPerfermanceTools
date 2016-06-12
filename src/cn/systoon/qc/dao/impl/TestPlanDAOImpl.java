@@ -4,7 +4,7 @@ import cn.systoon.qc.dao.DAO;
 import cn.systoon.qc.dao.TestPlanDAO;
 import cn.systoon.qc.domain.TestPlan;
 
-public class TestPanDAOImpl extends DAO implements TestPlanDAO {
+public class TestPlanDAOImpl extends DAO<TestPlan> implements TestPlanDAO {
 
 	@Override
 	public void save(TestPlan testPlan) {
