@@ -4,15 +4,12 @@
 <%@page import="java.util.List"%>
 <%@page import="cn.systoon.qc.domain.ServiceList"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<!-- <html xmlns="http://www.w3.org/1999/xhtml" lang="zh-cn"> -->
 <html>
 <head>
 <script type="text/javascript"
 	src="<%=request.getContextPath()%>/js/jquery-2.0.0.min.js"></script>
 <script type="text/javascript"
 	src="<%=request.getContextPath()%>/js/jquery-ui.js"></script>
-<script type="text/javascript"
-	src="<%=request.getContextPath()%>/js/jquery-1.7.2.js"></script>
 <script type="text/javascript"
 	src="<%=request.getContextPath()%>/js/bootstrap.min.js"></script>
 <script type="text/javascript"
@@ -28,8 +25,11 @@
 	$(function(){
 		$("#warname").change(function() {
 			var serviceId = $(this).val();
+			$("#ip").val("");
+			$("#port").val("");
 			if (serviceId != null) {
-				var url = "performServlet?method=getServiceIp";
+				
+				var url = "<%= request.getContextPath()%>/performServlet?method=getServiceIp";
 				var args = {
 					"id" : serviceId
 				};
@@ -40,6 +40,7 @@
 					}else{
 						$("#ip").val(data.pressIp);
 					}
+					$("#port").val("8081");
 				});
 			}
 
@@ -63,7 +64,7 @@
 					onsubmit="return submitPlan()">
 					<div class="tabbable" id="tabs-789280">
 						<ul class="nav nav-tabs">
-							<li class="active"><a data-toggle="tab" href="#panel-978253">配置接口请求</a></li>
+							<li class="active"><a  data-toggle="tab" href="#panel-978253">配置接口请求</a></li>
 							<li><a data-toggle="tab" href="#panel-653429">设置性能参数</a></li>
 						</ul>
 						<div class="tab-content">
@@ -78,12 +79,7 @@
 													<option value="">请选择项目名称</option>
 												    <% 			
 															List<ServiceList> serviceLists = null;
-															if(session.getAttribute("serviceLists")!=null){
-																serviceLists = (List<ServiceList>)session.getAttribute("serviceLists");
-															}else{
-																serviceLists = (List<ServiceList>) request.getAttribute("serviceLists");
-																session.setAttribute("serviceLists", serviceLists);
-															}
+															serviceLists = (List<ServiceList>) request.getAttribute("serviceLists");
 															if (serviceLists != null && serviceLists.size() > 0) {
 																for (ServiceList serviceList : serviceLists) {
 																	if (StringUtils.isNotBlank(serviceList.getProjectCN())){
@@ -133,9 +129,85 @@
 											</select></td>
 										</tr>
 									</table>
-									Parameters:<br />
-									<textarea class="textdefine" name="parameters"></textarea>
-									<span class="help-block">输入接口请求参数</span>
+								</fieldset>
+								<br/>
+								<fieldset>
+									<legend>Parameter:</legend>
+									<!-- 参数块start -->
+									<div class="container-fluid">
+										<div class="row-fluid">
+											<div class="span12">
+												<div class="tabbable" id="tabs-52171">
+													<ul class="nav nav-tabs">
+														<li class="active">
+															<a href="#panel-141708" data-toggle="tab">Parameters</a>
+														</li>
+														<li>
+															<a href="#panel-974412" data-toggle="tab">BodyData</a>
+														</li>
+													</ul>
+													<div class="tab-content">
+														<div class="tab-pane active" id="panel-141708">
+				
+												   <!-- <table class="table table-bordered table-hover table-condensed"> -->
+														<table class="table table-bordered">
+															<thead>
+																<tr>
+																	<th>
+																		name
+																	</th>
+																	<th>
+																		value
+																	</th>
+																	<th>
+																	
+																	</th>
+																</tr>
+															</thead>
+															<tbody>
+															<!-- 		<tr class="success/error/warning/info"> -->
+																<tr>
+																	<td>
+																		<input type="text" name="paramName" style="border: none;box-shadow:none" >
+																	</td>
+																	<td>
+																		<input type="text" name="paramValue" style="border: none;box-shadow:none" >
+																	</td>
+																	<td>
+																		<div class="span12">
+																			 <button type="button" class="close" style="float:left;margin-left: 2px" >×</button>
+																		</div>
+																	</td>
+																</tr>
+																
+															</tbody>
+														</table>
+														<div class="container-fluid">
+															<span class="help-block">* 添加请求参数</span>
+															<div class="row-fluid">
+																<div class="span2">
+																	 <button class="btn btn-block" type="button">添加</button>
+																</div>
+																
+															</div>
+														</div>
+												
+														</div>
+														<div class="tab-pane" id="panel-974412">
+															<div class="span12">
+																<textarea class="textdefine" name="parameters"></textarea>
+															</div>
+															<span class="help-block">输入接口请求参数</span>
+														</div>
+														
+														
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									
+									<!-- 参数块end -->
 								</fieldset>
 								<br />
 								<button type="submit" class="btn" onclick="testAPI()">测试接口</button>
@@ -172,7 +244,7 @@
 									<legend>响应断言</legend>
 									<textarea class="textdefine" name="assertion"></textarea>
 									<div class="alert">
-										<button type="button" class="close" data-dismiss="alert">×</button>
+										<button type="button" class="close" >×</button>
 										<strong>提示</strong> 输入断言的参数结果，即：响应信息中只要包含所填写的参数文本信息，就表示成功。
 									</div>
 								</fieldset>
@@ -209,7 +281,7 @@
 			<div class="span4">
 				<div class="tabbable" id="tabs-174529">
 					<ul class="nav nav-tabs">
-						<li class="active"><a href="#panel-913764" data-toggle="tab">操作日志</a>
+						<li class="active"><a href="#panel-913764">操作日志</a>
 						</li>
 					</ul>
 				</div>

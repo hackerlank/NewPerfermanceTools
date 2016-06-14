@@ -16,7 +16,7 @@
 								<li class="dropdown"><a data-toggle="dropdown"
 									class="dropdown-toggle" href="#">快速导航<strong class="caret"></strong></a>
 									<ul class="dropdown-menu">
-										<li><a href="<%= request.getContextPath() %>/html/edit.jsp">创建测试计划</a></li>
+										<li><a href="<%= request.getContextPath() %>/performServlet?method=edit">创建测试计划</a></li>
 										<li><a href="<%= request.getContextPath() %>/html/run.jsp">执行测试</a></li>
 										<li><a href="<%= request.getContextPath() %>/html/report.jsp">查看历史结果</a></li>
 									</ul></li>

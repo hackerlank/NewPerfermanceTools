@@ -149,12 +149,16 @@ public class PerformServlet extends HttpServlet {
 	}
 	
 	protected void getServiceIp(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		System.out.println("edit");
 		String id = request.getParameter("id");
 		ServiceListDAOImpl serviceListDAOImpl = new ServiceListDAOImpl();
 		ServiceList servicelist = serviceListDAOImpl.getServiceById(id);
+		System.out.println(servicelist);
 		ObjectMapper mapper = new ObjectMapper();
 		String result = mapper.writeValueAsString(servicelist);
-//		System.out.println("*******************" + result);
+		System.out.println("*******************" + result);
+		response.setCharacterEncoding("UTF-8");
+		response.setContentType("text/json");
 		response.getWriter().println(result);
 		
 		
