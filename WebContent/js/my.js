@@ -116,4 +116,94 @@ function changeIp(){
 
 	});
 }
+
+
+function deleteTr(nowTr){
+	var paramCount = parseInt($("#paramCount").val()); /* String 转 Int */
+	paramCount = paramCount - 1;
+	$("#paramCount").val(paramCount);
+	$(nowTr).parent().parent().remove(); 
+//	alert($("#paramCount").val());
+	var i=0,j=0;
+	$("input:text",$("#paramTable")).each(function(){
+		if($(this).parent().index() == 0){
+			var strName = "paramName" + $(this).parent().parent().index();
+		}else if($(this).parent().index() == 1){
+			var strName = "paramValue" + $(this).parent().parent().index();
+		}
+		$(this).attr("name",strName);
+	}); 
+}
+
+function setParamType(type){
+	//	type = 1, parameter  type=2,BodyData
+	$("#paramType").val(type);
+	
+}
+
+function showParamName(){
+	$("input:text",$("#paramTable")).each(function(){
+		alert($(this).attr("name"));
+	//	alert($(this).parent().parent().index());
+	}); 
+}
+
+$(function(){
+	$("#warname").change(function() {
+		var serviceId = $(this).val();
+		$("#ip").val("");
+		$("#port").val("");
+		if (serviceId != null) {
+			
+			var url = "<%= request.getContextPath()%>/performServlet?method=getServiceIp";
+			var args = {
+				"id" : serviceId
+			};
+
+			$.getJSON(url,args,function(data){
+				if(data.prdomain != null){
+					$("#ip").val(data.prdomain);
+				}else{
+					$("#ip").val(data.pressIp);
+				}
+				$("#port").val("8081");
+			});
+		}
+
+	});
+	
+	$("#addbtn").click(function(){
+		var paramCount = parseInt($("#paramCount").val());  /* String 转 Int */
+		var tr = "<tr><td><input type=\"text\" "
+		tr += "name=\"paramName" +  paramCount + "\"";
+		tr += "style=\"border: none;box-shadow:none\" >"
+		tr += "<td><input type=\"text\" "
+		tr += "name=\"paramValue" +  paramCount + "\"";
+		tr += "style=\"border: none;box-shadow:none\" ></td>"
+		tr += "<td><button class=\"delbtn close\" type=\"button\" class=\"close\" style=\"float:left;margin-left: 2px\" onclick=\"deleteTr(this)\" >×</button></td></tr>";
+		
+		if(paramCount == 0){
+			$("#paramtbody").append(tr);
+			$("#paramCount").val(paramCount+1);
+//			alert($("#paramCount").val());
+		}else{
+			/*判断input是否为空  */
+			var flag = true;
+		$("input:text",$("#paramTable")).each(function(){
+ 				if($(this).val().trim() == ""){
+ 					$(this).val("");
+					alert("有空参数");
+					flag = false;
+					return false;
+				}
+			}); 
+			
+			if(flag){
+				$("#paramtbody").append(tr);
+				$("#paramCount").val(paramCount+1);
+//				alert($("#paramCount").val());
+			}
+		}
+	});
+})
 	

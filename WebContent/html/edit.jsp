@@ -22,30 +22,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>edit</title>
 <script type="text/javascript">
-	$(function(){
-		$("#warname").change(function() {
-			var serviceId = $(this).val();
-			$("#ip").val("");
-			$("#port").val("");
-			if (serviceId != null) {
-				
-				var url = "<%= request.getContextPath()%>/performServlet?method=getServiceIp";
-				var args = {
-					"id" : serviceId
-				};
 
-				$.getJSON(url,args,function(data){
-					if(data.prdomain != null){
-						$("#ip").val(data.prdomain);
-					}else{
-						$("#ip").val(data.pressIp);
-					}
-					$("#port").val("8081");
-				});
-			}
-
-		});
-	})
 </script>
 
 </head>
@@ -64,7 +41,7 @@
 					onsubmit="return submitPlan()">
 					<div class="tabbable" id="tabs-789280">
 						<ul class="nav nav-tabs">
-							<li class="active"><a  data-toggle="tab" href="#panel-978253">配置接口请求</a></li>
+							<li class="active"><a  data-toggle="tab" href="#panel-978253" >配置接口请求</a></li>
 							<li><a data-toggle="tab" href="#panel-653429">设置性能参数</a></li>
 						</ul>
 						<div class="tab-content">
@@ -140,57 +117,38 @@
 												<div class="tabbable" id="tabs-52171">
 													<ul class="nav nav-tabs">
 														<li class="active">
-															<a href="#panel-141708" data-toggle="tab">Parameters</a>
+															<a href="#panel-141708" data-toggle="tab" onclick="setParamType(1)">Parameters</a>
 														</li>
 														<li>
-															<a href="#panel-974412" data-toggle="tab">BodyData</a>
+															<a href="#panel-974412" data-toggle="tab" onclick="setParamType(2)">BodyData</a>
 														</li>
 													</ul>
 													<div class="tab-content">
 														<div class="tab-pane active" id="panel-141708">
 				
 												   <!-- <table class="table table-bordered table-hover table-condensed"> -->
-														<table class="table table-bordered">
+														<table id="paramTable" class="table table-bordered table-condensed">
 															<thead>
 																<tr>
-																	<th>
+																	<th width="45%">
 																		name
 																	</th>
-																	<th>
+																	<th width="45%">
 																		value
 																	</th>
-																	<th>
-																	
+																	<th width="10%">
+																		<div class="span12">
+																			 <button id="addbtn" type="button" style="float:none;opacity:0.6;font-weight: normal;" >add</button>
+																		</div>
 																	</th>
 																</tr>
 															</thead>
-															<tbody>
+															<tbody id="paramtbody">
 															<!-- 		<tr class="success/error/warning/info"> -->
-																<tr>
-																	<td>
-																		<input type="text" name="paramName" style="border: none;box-shadow:none" >
-																	</td>
-																	<td>
-																		<input type="text" name="paramValue" style="border: none;box-shadow:none" >
-																	</td>
-																	<td>
-																		<div class="span12">
-																			 <button type="button" class="close" style="float:left;margin-left: 2px" >×</button>
-																		</div>
-																	</td>
-																</tr>
 																
 															</tbody>
 														</table>
-														<div class="container-fluid">
-															<span class="help-block">* 添加请求参数</span>
-															<div class="row-fluid">
-																<div class="span2">
-																	 <button class="btn btn-block" type="button">添加</button>
-																</div>
-																
-															</div>
-														</div>
+														<span class="help-block">* 添加请求参数</span>
 												
 														</div>
 														<div class="tab-pane" id="panel-974412">
@@ -211,6 +169,8 @@
 								</fieldset>
 								<br />
 								<button type="submit" class="btn" onclick="testAPI()">测试接口</button>
+								
+								<button type="submit" onclick="showParamName()">显示Param名称</button>
 								<br />
 							</div>
 							<div class="tab-pane" id="panel-653429">
@@ -272,6 +232,8 @@
 								<br />
 								<div>
 									<input type="hidden" value="" name="type" id="type" />
+									<input type="hidden" value="1" name="paramType" id="paramType" />
+									<input type="hidden" value="0" name="paramCount" id="paramCount" />
 								</div>
 							</div>
 						</div>

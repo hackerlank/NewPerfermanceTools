@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -45,6 +47,8 @@ public class PerformServlet extends HttpServlet {
     String jmxPlanPath = "/Users/perfermance/JmeterTest/script/";
     String descript = "";
 	private boolean flag = false;
+	
+	private static Log log = LogFactory.getLog(PerformServlet.class);
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doPost(request, response);
@@ -153,10 +157,14 @@ public class PerformServlet extends HttpServlet {
 		String id = request.getParameter("id");
 		ServiceListDAOImpl serviceListDAOImpl = new ServiceListDAOImpl();
 		ServiceList servicelist = serviceListDAOImpl.getServiceById(id);
-		System.out.println(servicelist);
+		log.debug("debug: " + servicelist);
+		log.error("error: " + servicelist);
+		log.fatal("fatal: " + servicelist);
+		log.info("info: " + servicelist);
+		
 		ObjectMapper mapper = new ObjectMapper();
 		String result = mapper.writeValueAsString(servicelist);
-		System.out.println("*******************" + result);
+		log.info("*******************" + result);
 		response.setCharacterEncoding("UTF-8");
 		response.setContentType("text/json");
 		response.getWriter().println(result);
