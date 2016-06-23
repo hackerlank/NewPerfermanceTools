@@ -1,8 +1,12 @@
 package cn.systoon.qc.servlet;
 
+import java.awt.image.RescaleOp;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,9 +21,12 @@ import org.apache.commons.logging.LogFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import cn.systoon.qc.dao.impl.ServiceListDAOImpl;
+import cn.systoon.qc.domain.ApiInfo;
+import cn.systoon.qc.domain.Parameters;
 import cn.systoon.qc.domain.ServiceList;
 import cn.systoon.qc.jmxhandler.JmxParserDom4jHandler;
 import cn.systoon.qc.utils.HttpClientUtil;
+import cn.systoon.qc.utils.HttpUtils;
 
 /**
  * Servlet implementation class PerformServlet
@@ -31,21 +38,36 @@ public class PerformServlet extends HttpServlet {
     public PerformServlet() {
         super();
     }
-
+    /**
+     * 数据表 ApiInfo表中数据
+     */
+    String warnameId = "";
     String ip = "";
     String port = "";
     String path = "";
-    String parameters = "";
+    String paramType = "";
+    String parameters = "";  //当paramType＝2时，写入parameters值;
     String requestMethod = "";
+    
+    /**
+     * 数据表 Parameters表中数据,需关联表一中的 ApiInfoId
+     */
+    String paramCount = "";
+    
+    /**
+     * 数据表 testPlan 表中数据, 关联
+     */
     String vuser = "";
     String assertion = "";
-    String methodName = "";
     String duration = "";
-    String url = "";
-    String jmxPlanTemple = "/Users/perfermance/JmeterTest/script/jmxPlanTemple.jmx";
-    String jmxPlan = "";
-    String jmxPlanPath = "/Users/perfermance/JmeterTest/script/";
+    String methodName = "";
     String descript = "";
+    String testPlanName = "";
+    
+    String url = "";
+    String jmxPlan = "";
+    String jmxPlanTemple = "/Users/perfermance/JmeterTest/script/jmxPlanTemple.jmx";
+    String jmxPlanPath = "/Users/perfermance/JmeterTest/script/";
 	private boolean flag = false;
 	
 	private static Log log = LogFactory.getLog(PerformServlet.class);
@@ -54,21 +76,20 @@ public class PerformServlet extends HttpServlet {
 		doPost(request, response);
 	}
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		ip = request.getParameter("ip");
-		port = request.getParameter("port");
-		path = request.getParameter("path");
-		parameters = request.getParameter("parameters");
-		requestMethod = request.getParameter("requestmethod");
+		
 		vuser = request.getParameter("vuser");
 		assertion = request.getParameter("assertion");
 		duration = request.getParameter("duration");
-		jmxPlan = request.getParameter("testplanname");
+		testPlanName = request.getParameter("testplanname");
 		descript = request.getParameter("testplandesc");
 		methodName=request.getParameter("method");
+		
+		ip = request.getParameter("ip");
+		port = request.getParameter("port");
 		if(StringUtils.isBlank(port)){
 			port = "80";
 		}
-//		url = "http://" + ip + ":" + port + path;
+		url = "http://" + ip + ":" + port + path;
 //		
 //		System.out.println("ip：" + ip);
 //		System.out.println("port：" + port);
@@ -92,50 +113,110 @@ public class PerformServlet extends HttpServlet {
 	}
 	
 	
-	protected void test(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected Boolean test(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		Boolean flag;
+		
+		/**
+		 * 处理ApiInfo表中的数据
+		 */
+		Integer id = null;
+		Integer paramTypeInt = null;
+		Map<String,String> params = new HashMap<String,String>();
+		Map<String,String> postHeader = new HashMap<String,String>();
+		List<Parameters> paramList = new ArrayList<Parameters>();
+		String result = null;
+		List<Object> resultList = null;
+		
+		warnameId = request.getParameter("project");
+		path = request.getParameter("path");
+		requestMethod = request.getParameter("requestmethod");
+		paramType = request.getParameter("paramType");
+		
+		parameters = request.getParameter("parameters");
+		if(paramType != null){
+			paramTypeInt = Integer.parseInt(paramType);
+		}
+		ApiInfo apiInfo = new ApiInfo(id, path, warnameId, paramTypeInt, parameters, requestMethod);
+		Integer apiId = null; //写入parameters表中的关联apiId；
+		/**
+		 * 处理parameters表中的数据
+		 * 当paramType ＝ 1时表示 key－value模式
+		 */
+		if(paramTypeInt == 1){
+			paramCount = request.getParameter("paramCount");
+			int count = Integer.parseInt(paramCount);
+			for(int i = 0; i < count;i++){
+				String paramName = request.getParameter("paramName" + i);
+				String paramValue = request.getParameter("paramValue" + i);
+				
+				paramList.add(new Parameters(apiId, paramName, paramValue));
+				
+				if(StringUtils.isNotEmpty(paramName) && StringUtils.isNotEmpty(paramValue)){
+					params.put(paramName, paramValue);
+				}
+				
+			}
+			
+		}
 		
 		if(requestMethod.equals("get")){
-			if(StringUtils.isNotBlank(parameters)){
-				HttpClientUtil.get(url + "?" + parameters);
-			}else{
-				HttpClientUtil.get(url);
+			if(paramTypeInt == 1){
+				if(!params.isEmpty()){
+					result = HttpUtils.doGetForm(url, params, "utf-8");
+				}
+			}else if(paramTypeInt == 2){
+				url = url + "?" + parameters;
+				result = HttpUtils.doGetStrReq(url, "utf-8");
 			}
 		}else if(requestMethod.equals("post")){
-			HttpClientUtil.postJson(url, parameters);
+			postHeader.put("Content-Type", "application/json");
+			if(paramTypeInt == 1){
+				if(!params.isEmpty()){
+					resultList = HttpUtils.doPostFormReq(url, postHeader, params, "utf-8");
+				}
+				parameters = params.toString();
+				result = resultList.toString();
+			}else if(paramTypeInt == 2){
+				result = HttpUtils.doPostStringReq(url, postHeader, parameters, "utf-8");
+			}
+		}
+		if(StringUtils.isNotEmpty(result)){
+			flag = true;
+		}else{
+			flag = false;
 		}
 		response.setCharacterEncoding("UTF-8");
-		response.getWriter().print(HttpClientUtil.getStringBuilder().toString());
+		response.getWriter().println("请求信息：" + "<br>");
+		response.getWriter().println("请求url：" + url);
+		response.getWriter().println("请求参数：");
+		response.getWriter().println("请求parameter：" + parameters);
+		response.getWriter().println("");
+		response.getWriter().println("请求结果：");
+		response.getWriter().println(result);
 		
+		//抛出异常时，未处理，异常信息也没有打印到屏幕上，待处理。。。。。
+		return flag;
 	}
 	
 	protected void save(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		if(StringUtils.isBlank(jmxPlan)){
+		if(StringUtils.isBlank(testPlanName)){
 			if(StringUtils.isNotBlank(path)){
-				jmxPlan = jmxPlanPath + path.substring(1, path.length()).replace('/', '_') + "_" + vuser + ".jmx";
+				testPlanName = jmxPlanPath + path.substring(1, path.length()).replace('/', '_') + "_" + vuser;
+				jmxPlan =testPlanName + ".jmx";
 			}else{
-				jmxPlan = jmxPlanPath + System.currentTimeMillis() + ".jmx";
+				testPlanName = jmxPlanPath + System.currentTimeMillis();
+				jmxPlan =testPlanName + ".jmx";
 			}
 		}else{
-			jmxPlan = jmxPlanPath + jmxPlan + ".jmx";
+			jmxPlan = jmxPlanPath + testPlanName + ".jmx";
 		}
 		
-		if(requestMethod.equals("get")){
-			if(StringUtils.isNotBlank(parameters)){
-				flag = HttpClientUtil.get(url + "?" + parameters);
-			}else{
-				flag = HttpClientUtil.get(url);
-			}
-		}else if(requestMethod.equals("post")){
-			flag = HttpClientUtil.postJson(url, parameters);
-		}else{
-			
-			System.out.println(flag);
-		}
+
 		
 		
-		if(!flag){
+		if(!test(request,response)){
 			response.setCharacterEncoding("UTF-8");
-			response.getWriter().print(HttpClientUtil.getStringBuilder().toString());
+			response.getWriter().print("接口请求返回异常，请检查。");
 		}else{
 			JmxParserDom4jHandler.createJmxPlan(jmxPlanTemple, jmxPlan, ip, port, path, requestMethod, parameters, vuser, assertion,duration);
 			response.setCharacterEncoding("UTF-8");
@@ -166,7 +247,6 @@ public class PerformServlet extends HttpServlet {
 		String result = mapper.writeValueAsString(servicelist);
 		log.info("*******************" + result);
 		response.setCharacterEncoding("UTF-8");
-		response.setContentType("text/json");
 		response.getWriter().println(result);
 		
 		

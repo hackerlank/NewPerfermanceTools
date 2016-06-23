@@ -69,10 +69,10 @@ function Change(obj) {
 	function submitPlan() {
 		var url;
 		if (document.getElementById("type").value == "save") {
-			url = "../performServlet?method=save";
+			url = "performServlet?method=save";
 		} else if (document.getElementById("type").value == "test") {
-//			url = "../performServlet?method=test";
-			url = "../performServlet?method=getServiceIp";
+			url = "performServlet?method=test";
+	//		url = "performServlet?method=getServiceIp";
 		}
 		if (checkEmpty()) {
 			$.ajax({
@@ -93,38 +93,13 @@ function Change(obj) {
 		return false;
 	}
 	
-function changeIp(){
-	$("#warname").change(function() {
-		var serviceId = $(this).val();
-		if (serviceId != null) {
-			var url = "/performServlet?method=getServiceIp";
-			var args = {
-				"id" : serviceId
-			};
-
-			$.getJSON(url, args, function(data) {
-				if (data.length == 0) {
-					alert("请输入IP地址，端口号");
-				} else {
-					for (var i = 0; i < data.length; i++) {
-						var serviceIp = data[i].pressip;
-						$("#ip").val(serviceIp);
-					}
-				}
-			});
-		}
-
-	});
-}
-
-
 function deleteTr(nowTr){
 	var paramCount = parseInt($("#paramCount").val()); /* String 转 Int */
 	paramCount = paramCount - 1;
 	$("#paramCount").val(paramCount);
 	$(nowTr).parent().parent().remove(); 
 //	alert($("#paramCount").val());
-	var i=0,j=0;
+
 	$("input:text",$("#paramTable")).each(function(){
 		if($(this).parent().index() == 0){
 			var strName = "paramName" + $(this).parent().parent().index();
@@ -145,33 +120,40 @@ function showParamName(){
 	$("input:text",$("#paramTable")).each(function(){
 		alert($(this).attr("name"));
 	//	alert($(this).parent().parent().index());
+		
 	}); 
 }
 
 $(function(){
-	$("#warname").change(function() {
+	$("#project").change(function() {
 		var serviceId = $(this).val();
 		$("#ip").val("");
 		$("#port").val("");
 		if (serviceId != null) {
 			
-			var url = "<%= request.getContextPath()%>/performServlet?method=getServiceIp";
+			var url = "performServlet?method=getServiceIp";
 			var args = {
 				"id" : serviceId
 			};
 
 			$.getJSON(url,args,function(data){
-				if(data.prdomain != null){
-					$("#ip").val(data.prdomain);
-				}else{
-					$("#ip").val(data.pressIp);
+				if (data.length == 0) {
+					alert("请输入IP地址，端口号");
+				} else {
+					if(data.prdomain != null){
+						$("#ip").val(data.prdomain);
+					}else{
+						$("#ip").val(data.pressIp);
+					}
+					$("#port").val("8081");
 				}
-				$("#port").val("8081");
 			});
 		}
 
 	});
 	
+	// 增加单独接口配置页面
+	//后期优化：增加和删除时，添加删除和修改标记，以便后期修改parameter表	
 	$("#addbtn").click(function(){
 		var paramCount = parseInt($("#paramCount").val());  /* String 转 Int */
 		var tr = "<tr><td><input type=\"text\" "
@@ -204,6 +186,8 @@ $(function(){
 //				alert($("#paramCount").val());
 			}
 		}
+		return false;
+
 	});
 })
 	

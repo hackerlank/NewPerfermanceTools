@@ -4,10 +4,10 @@ import java.util.Date;
 
 public class ApiInfo {
 	private Integer id;
-	private String apiName;
-	private String warnameId;
 	private String path;
-	private String paramaters;
+	private String warnameId;
+	private Integer paramType;
+	private String parameters;
 	private String method;
 	
 	public Integer getId() {
@@ -16,11 +16,11 @@ public class ApiInfo {
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	public String getApiName() {
-		return apiName;
+	public String getPath() {
+		return path;
 	}
-	public void setApiName(String apiName) {
-		this.apiName = apiName;
+	public void setPath(String path) {
+		this.path = path;
 	}
 	public String getWarnameId() {
 		return warnameId;
@@ -28,17 +28,17 @@ public class ApiInfo {
 	public void setWarnameId(String warnameId) {
 		this.warnameId = warnameId;
 	}
-	public String getPath() {
-		return path;
+	public int getParamType() {
+		return paramType;
 	}
-	public void setPath(String path) {
-		this.path = path;
+	public void setParamType(int paramType) {
+		this.paramType = paramType;
 	}
-	public String getParamaters() {
-		return paramaters;
+	public String getParameters() {
+		return parameters;
 	}
-	public void setParamaters(String paramaters) {
-		this.paramaters = paramaters;
+	public void setParameters(String parameters) {
+		this.parameters = parameters;
 	}
 	public String getMethod() {
 		return method;
@@ -46,24 +46,25 @@ public class ApiInfo {
 	public void setMethod(String method) {
 		this.method = method;
 	}
-	public ApiInfo(Integer id, String apiName, String warnameId, String path, String paramaters, String method) {
+	public ApiInfo(Integer id, String path, String warnameId, int paramType, String parameters, String method) {
 		super();
 		this.id = id;
-		this.apiName = apiName;
-		this.warnameId = warnameId;
 		this.path = path;
-		this.paramaters = paramaters;
+		this.warnameId = warnameId;
+		this.paramType = paramType;
+		this.parameters = parameters;
 		this.method = method;
 	}
-	
-	public ApiInfo(){
-		
+	public ApiInfo() {
+		super();
+		// TODO Auto-generated constructor stub
 	}
 	@Override
 	public String toString() {
-		return "ApiInfo [id=" + id + ", apiName=" + apiName + ", warnameId=" + warnameId + ", path=" + path
-				+ ", paramaters=" + paramaters + ", method=" + method + "]";
+		return "ApiInfo [id=" + id + ", path=" + path + ", warnameId=" + warnameId + ", paramType=" + paramType
+				+ ", parameters=" + parameters + ", method=" + method + "]";
 	}
+	
 	
 	
 }

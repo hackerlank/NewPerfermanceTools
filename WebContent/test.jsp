@@ -37,5 +37,7 @@
 <body>
   <button>Click here...</button>
   <div>haha</div>
+  
+  <a href="testResponseServlet">test response</a>
 </body>
 </html>

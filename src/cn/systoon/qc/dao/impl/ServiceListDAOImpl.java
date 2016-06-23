@@ -22,13 +22,13 @@ public class ServiceListDAOImpl extends DAO<ServiceList> implements ServiceListD
 
 	@Override
 	public List<ServiceList> getAll() {
-		String sql = "SELECT id,project_CN projectCN,pressIP pressIp,prdomain from servicelist";
+		String sql = "SELECT id,project_CN projectCN from servicelist";
 		return getForList(sql);
 	}
 
 	@Override
 	public ServiceList getServiceById(String id) {
-		String sql = "SELECT id,project_CN projectCN,pressIP pressIp, prdomain from servicelist where id = ?";
+		String sql = "SELECT id,project_CN projectCN,pressIP pressIp, prdomain,warname from servicelist where id = ?";
 		return get(sql, id);
 	}
 

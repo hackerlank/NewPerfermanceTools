@@ -9,7 +9,7 @@ public class TestPlan {
 	private Integer apiId;
 	private Integer testPlanType;
 	private String parameters;
-	private String testPlanPath;
+	private String jmxPlan;
 	private Date createTime;
 
 
@@ -61,12 +61,12 @@ public class TestPlan {
 		this.parameters = parameters;
 	}
 
-	public String getTestPlanPath() {
-		return testPlanPath;
+	public String getJmxPlan() {
+		return jmxPlan;
 	}
 
-	public void setTestPlanPath(String testPlanPath) {
-		this.testPlanPath = testPlanPath;
+	public void setJmxPlan(String jmxPlan) {
+		this.jmxPlan = jmxPlan;
 	}
 
 	public Date getCreateTime() {
@@ -78,7 +78,7 @@ public class TestPlan {
 	}
 
 	public TestPlan(Integer id, String testPlanName, String descript, Integer apiId, Integer testPlanType,
-			String parameters, String testPlanPath, Date createTime) {
+			String parameters, String jmxPlan, Date createTime) {
 		super();
 		this.id = id;
 		this.testPlanName = testPlanName;
@@ -86,7 +86,7 @@ public class TestPlan {
 		this.apiId = apiId;
 		this.testPlanType = testPlanType;
 		this.parameters = parameters;
-		this.testPlanPath = testPlanPath;
+		this.jmxPlan = jmxPlan;
 		this.createTime = createTime;
 	}
 
@@ -97,7 +97,7 @@ public class TestPlan {
 	@Override
 	public String toString() {
 		return "TestPlan [id=" + id + ", testPlanName=" + testPlanName + ", descript=" + descript + ", apiId=" + apiId
-				+ ", testplanType=" + testPlanType + ", parameters=" + parameters + ", testPlanPath=" + testPlanPath
+				+ ", testplanType=" + testPlanType + ", parameters=" + parameters + ", jmxPlan=" + jmxPlan
 				+ ", createTime=" + createTime + "]";
 	}
 	

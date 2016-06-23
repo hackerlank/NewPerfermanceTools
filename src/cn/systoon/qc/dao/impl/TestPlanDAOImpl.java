@@ -8,10 +8,10 @@ public class TestPlanDAOImpl extends DAO<TestPlan> implements TestPlanDAO {
 
 	@Override
 	public void save(TestPlan testPlan) {
-		String sql = "INSERT INTO testplan(testplan_name,descript,api_id,testplan_type,parameters,testplan_path,create_time)"
+		String sql = "INSERT INTO testplan(testplan_name,descript,api_id,testplan_type,parameters,jmxPlan,create_time)"
 				+ " VALUES (?,?,?,?,?,?,?)";
 		update(sql, testPlan.getTestPlanName(), testPlan.getDescript(), testPlan.getApiId(), testPlan.getTestPlanType(),
-				testPlan.getParameters(), testPlan.getTestPlanPath(), testPlan.getCreateTime());
+				testPlan.getParameters(), testPlan.getJmxPlan(), testPlan.getCreateTime());
 
 	}
 

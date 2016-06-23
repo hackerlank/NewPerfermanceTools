@@ -37,7 +37,7 @@
 		</div>
 		<div class="row-fluid">
 			<div class="span8">
-				<form id="form" name="form1" action="" method="post"
+				<form id="form" name="form1" action="" method="get"
 					onsubmit="return submitPlan()">
 					<div class="tabbable" id="tabs-789280">
 						<ul class="nav nav-tabs">
@@ -52,7 +52,7 @@
 									<table>
 										<tr>
 											<td>Project Name:</td>
-											<td><select id="warname" name="warname">
+											<td><select id="project" name="project">
 													<option value="">请选择项目名称</option>
 												    <% 			
 															List<ServiceList> serviceLists = null;
@@ -94,15 +94,15 @@
 									<table>
 										<tr>
 											<td>Path:</td>
-											<td><input type="text" name="path" size="30" value="" /></td>
+											<td><input type="text" name="path" size="30" value="/dataInterOper/operServlet/saveOperInfo" /></td>
 											<td><span class="help-block">输入接口请求路径</span></td>
 										</tr>
 
 										<tr>
 											<td>Method:</td>
 											<td><select name="requestmethod">
-													<option value="get" selected="selected">GET</option>
-													<option value="post">POST</option>
+													<option value="get" >GET</option>
+													<option value="post" selected="selected">POST</option>
 											</select></td>
 										</tr>
 									</table>
@@ -153,7 +153,7 @@
 														</div>
 														<div class="tab-pane" id="panel-974412">
 															<div class="span12">
-																<textarea class="textdefine" name="parameters"></textarea>
+																<textarea class="textdefine" name="parameters" style="height:100px "></textarea>
 															</div>
 															<span class="help-block">输入接口请求参数</span>
 														</div>
@@ -166,11 +166,12 @@
 									</div>
 									
 									<!-- 参数块end -->
+									
 								</fieldset>
 								<br />
 								<button type="submit" class="btn" onclick="testAPI()">测试接口</button>
 								
-								<button type="submit" onclick="showParamName()">显示Param名称</button>
+								<button type="button" onclick="showParamName()">显示Param名称</button>
 								<br />
 							</div>
 							<div class="tab-pane" id="panel-653429">
