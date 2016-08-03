@@ -3,10 +3,12 @@ package cn.systoon.qc.dao;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
+import org.apache.commons.dbutils.handlers.BeanMapHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
 
 import cn.systoon.qc.db.JdbcUtils;
@@ -21,6 +23,8 @@ public class DAO <T>{
 		clazz = ReflectionUtils.getSuperClassGenricType(getClass(), 0);
 	}
 	
+	
+
 	
 	/**
 	 * 返回某一个字段的值
@@ -41,6 +45,29 @@ public class DAO <T>{
 		}
 		return null;
 	}
+	
+	/**
+	 * 返回 Map<Integer,T> key是第一列，value是对象
+	 * @param sql
+	 * @param args
+	 * @return
+	 */
+
+	
+	public Map<Integer, T> getForMap(String sql,Object ...args ){
+		Connection connection = null;
+		
+		try {
+			connection = JdbcUtils.getConnection();
+			return queryRunner.query(connection, sql, new BeanMapHandler<Integer, T>(clazz),args);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally{
+			JdbcUtils.releaseConnection(connection);
+		}
+		return null;
+	}
+	
 	
 	/**
 	 * 返回 T 所对应的 List

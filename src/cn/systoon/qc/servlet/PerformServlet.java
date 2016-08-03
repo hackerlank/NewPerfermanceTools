@@ -84,6 +84,7 @@ public class PerformServlet extends HttpServlet {
 		descript = request.getParameter("testplandesc");
 		methodName=request.getParameter("method");
 		
+		
 		ip = request.getParameter("ip");
 		port = request.getParameter("port");
 		if(StringUtils.isBlank(port)){
@@ -232,10 +233,12 @@ public class PerformServlet extends HttpServlet {
 		request.getRequestDispatcher("/html/edit.jsp").forward(request, response);
 		
 	}
+
 	
 	protected void getServiceIp(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println("edit");
 		String id = request.getParameter("id");
+		String env_id = request.getParameter("environment");
 		ServiceListDAOImpl serviceListDAOImpl = new ServiceListDAOImpl();
 		ServiceList servicelist = serviceListDAOImpl.getServiceById(id);
 		log.debug("debug: " + servicelist);

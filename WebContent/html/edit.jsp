@@ -22,11 +22,18 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>edit</title>
 <script type="text/javascript">
-
+	
 </script>
 
 </head>
 <body>
+
+	<%
+		List <ServiceList> serviceLists = null; 
+		serviceLists = (List<ServiceList>)request.getAttribute("serviceLists"); 
+	
+	%>
+	
 	<%@include file="/html/header.jspf"%>
 	<div id="container" class="container-fluid"
 		style="padding: 0px 20px; margin: 0 auto">
@@ -41,7 +48,7 @@
 					onsubmit="return submitPlan()">
 					<div class="tabbable" id="tabs-789280">
 						<ul class="nav nav-tabs">
-							<li class="active"><a  data-toggle="tab" href="#panel-978253" >配置接口请求</a></li>
+							<li class="active"><a data-toggle="tab" href="#panel-978253">配置接口请求</a></li>
 							<li><a data-toggle="tab" href="#panel-653429">设置性能参数</a></li>
 						</ul>
 						<div class="tab-content">
@@ -51,28 +58,35 @@
 									<legend>Web Server:</legend>
 									<table>
 										<tr>
-											<td>Project Name:</td>
-											<td><select id="project" name="project">
-													<option value="">请选择项目名称</option>
-												    <% 			
-															List<ServiceList> serviceLists = null;
-															serviceLists = (List<ServiceList>) request.getAttribute("serviceLists");
-															if (serviceLists != null && serviceLists.size() > 0) {
-																for (ServiceList serviceList : serviceLists) {
-																	if (StringUtils.isNotBlank(serviceList.getProjectCN())){
-													%>
-													<option value="<%=serviceList.getId()%>"><%=serviceList.getProjectCN()%></option>
-													
-													<%
-																}
-															}
-														}
-
-													%>
-													
+											<td>Environment:</td>
+											<td><select id="environment" name="environment">
+													<option value="1">开发环境</option>
+													<option value="2">测试环境</option>
+													<option value="3">预生产环境</option>
 											</select></td>
 										</tr>
-										
+
+										<tr>
+											<td>Project Name:</td>
+											<td><select id="project" name="project"
+												onchange="addIP()">
+													<option value="">请选择项目名称</option>
+													<%
+														if (serviceLists != null && serviceLists.size() > 0) {
+															for (ServiceList serviceList : serviceLists) {
+																if (StringUtils.isNotBlank(serviceList.getProjectCN())) {
+													%>
+													<option value="<%=serviceList.getId()%>"><%=serviceList.getProjectCN()%></option>
+
+													<%
+														}
+															}
+														}
+													%>
+
+											</select></td>
+										</tr>
+
 										<tr>
 											<td>Server Name or IP:</td>
 											<td><input id="ip" type="text" name="ip" size="30"
@@ -94,20 +108,21 @@
 									<table>
 										<tr>
 											<td>Path:</td>
-											<td><input type="text" name="path" size="30" value="/dataInterOper/operServlet/saveOperInfo" /></td>
+											<td><input type="text" name="path" size="30"
+												value="/dataInterOper/operServlet/saveOperInfo" /></td>
 											<td><span class="help-block">输入接口请求路径</span></td>
 										</tr>
 
 										<tr>
 											<td>Method:</td>
 											<td><select name="requestmethod">
-													<option value="get" >GET</option>
+													<option value="get">GET</option>
 													<option value="post" selected="selected">POST</option>
 											</select></td>
 										</tr>
 									</table>
 								</fieldset>
-								<br/>
+								<br />
 								<fieldset>
 									<legend>Parameter:</legend>
 									<!-- 参数块start -->
@@ -116,61 +131,59 @@
 											<div class="span12">
 												<div class="tabbable" id="tabs-52171">
 													<ul class="nav nav-tabs">
-														<li class="active">
-															<a href="#panel-141708" data-toggle="tab" onclick="setParamType(1)">Parameters</a>
+														<li class="active"><a href="#panel-141708"
+															data-toggle="tab" onclick="setParamType(1)">Parameters</a>
 														</li>
-														<li>
-															<a href="#panel-974412" data-toggle="tab" onclick="setParamType(2)">BodyData</a>
-														</li>
+														<li><a href="#panel-974412" data-toggle="tab"
+															onclick="setParamType(2)">BodyData</a></li>
 													</ul>
 													<div class="tab-content">
 														<div class="tab-pane active" id="panel-141708">
-				
-												   <!-- <table class="table table-bordered table-hover table-condensed"> -->
-														<table id="paramTable" class="table table-bordered table-condensed">
-															<thead>
-																<tr>
-																	<th width="45%">
-																		name
-																	</th>
-																	<th width="45%">
-																		value
-																	</th>
-																	<th width="10%">
-																		<div class="span12">
-																			 <button id="addbtn" type="button" style="float:none;opacity:0.6;font-weight: normal;" >add</button>
-																		</div>
-																	</th>
-																</tr>
-															</thead>
-															<tbody id="paramtbody">
-															<!-- 		<tr class="success/error/warning/info"> -->
-																
-															</tbody>
-														</table>
-														<span class="help-block">* 添加请求参数</span>
-												
+
+															<!-- <table class="table table-bordered table-hover table-condensed"> -->
+															<table id="paramTable"
+																class="table table-bordered table-condensed">
+																<thead>
+																	<tr>
+																		<th width="45%">name</th>
+																		<th width="45%">value</th>
+																		<th width="10%">
+																			<div class="span12">
+																				<button id="addbtn" type="button"
+																					style="float: none; opacity: 0.6; font-weight: normal;">add</button>
+																			</div>
+																		</th>
+																	</tr>
+																</thead>
+																<tbody id="paramtbody">
+																	<!-- 		<tr class="success/error/warning/info"> -->
+
+																</tbody>
+															</table>
+															<span class="help-block">* 添加请求参数</span>
+
 														</div>
 														<div class="tab-pane" id="panel-974412">
 															<div class="span12">
-																<textarea class="textdefine" name="parameters" style="height:100px "></textarea>
+																<textarea class="textdefine" name="parameters"
+																	style="height: 100px"></textarea>
 															</div>
 															<span class="help-block">输入接口请求参数</span>
 														</div>
-														
-														
+
+
 													</div>
 												</div>
 											</div>
 										</div>
 									</div>
-									
+
 									<!-- 参数块end -->
-									
+
 								</fieldset>
 								<br />
 								<button type="submit" class="btn" onclick="testAPI()">测试接口</button>
-								
+
 								<button type="button" onclick="showParamName()">显示Param名称</button>
 								<br />
 							</div>
@@ -205,7 +218,7 @@
 									<legend>响应断言</legend>
 									<textarea class="textdefine" name="assertion"></textarea>
 									<div class="alert">
-										<button type="button" class="close" >×</button>
+										<button type="button" class="close">×</button>
 										<strong>提示</strong> 输入断言的参数结果，即：响应信息中只要包含所填写的参数文本信息，就表示成功。
 									</div>
 								</fieldset>
@@ -232,9 +245,9 @@
 								</fieldset>
 								<br />
 								<div>
-									<input type="hidden" value="" name="type" id="type" />
-									<input type="hidden" value="1" name="paramType" id="paramType" />
-									<input type="hidden" value="0" name="paramCount" id="paramCount" />
+									<input type="hidden" value="" name="type" id="type" /> <input
+										type="hidden" value="1" name="paramType" id="paramType" /> <input
+										type="hidden" value="0" name="paramCount" id="paramCount" />
 								</div>
 							</div>
 						</div>
@@ -244,8 +257,7 @@
 			<div class="span4">
 				<div class="tabbable" id="tabs-174529">
 					<ul class="nav nav-tabs">
-						<li class="active"><a href="#panel-913764">操作日志</a>
-						</li>
+						<li class="active"><a href="#panel-913764">操作日志</a></li>
 					</ul>
 				</div>
 				<div class="tab-content">
