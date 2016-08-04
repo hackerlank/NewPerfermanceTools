@@ -20,6 +20,7 @@ import org.apache.commons.logging.LogFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import cn.systoon.qc.dao.impl.ApiInfoDAOImpl;
 import cn.systoon.qc.dao.impl.ServiceListDAOImpl;
 import cn.systoon.qc.domain.ApiInfo;
 import cn.systoon.qc.domain.Parameters;
@@ -248,6 +249,22 @@ public class PerformServlet extends HttpServlet {
 		
 		ObjectMapper mapper = new ObjectMapper();
 		String result = mapper.writeValueAsString(servicelist);
+		log.info("*******************" + result);
+		response.setCharacterEncoding("UTF-8");
+		response.getWriter().println(result);
+		
+		
+	}
+	
+	protected void getApiPath(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		System.out.println("edit");
+		String id = request.getParameter("id");
+		ApiInfoDAOImpl apiInfoDAOImpl = new ApiInfoDAOImpl();
+		List<ApiInfo> apiInfoList = apiInfoDAOImpl.getListWithWarnameId(id);
+
+		
+		ObjectMapper mapper = new ObjectMapper();
+		String result = mapper.writeValueAsString(apiInfoList);
 		log.info("*******************" + result);
 		response.setCharacterEncoding("UTF-8");
 		response.getWriter().println(result);

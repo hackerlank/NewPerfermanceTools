@@ -29,11 +29,10 @@
 <body>
 
 	<%
-		List <ServiceList> serviceLists = null; 
-		serviceLists = (List<ServiceList>)request.getAttribute("serviceLists"); 
-	
+		List<ServiceList> serviceLists = null;
+		serviceLists = (List<ServiceList>) request.getAttribute("serviceLists");
 	%>
-	
+
 	<%@include file="/html/header.jspf"%>
 	<div id="container" class="container-fluid"
 		style="padding: 0px 20px; margin: 0 auto">
@@ -68,9 +67,8 @@
 
 										<tr>
 											<td>Project Name:</td>
-											<td><select id="project" name="project"
-												onchange="addIP()">
-													<option value="">请选择项目名称</option>
+											<td><select id="project" name="project">
+													<option value="0" selected="selected">请选择项目名称</option>
 													<%
 														if (serviceLists != null && serviceLists.size() > 0) {
 															for (ServiceList serviceList : serviceLists) {
@@ -91,6 +89,7 @@
 											<td>Server Name or IP:</td>
 											<td><input id="ip" type="text" name="ip" size="30"
 												value="" /></td>
+											<td id="domainInfo" style="color: red; display: none">域名访问时，请在hosts中绑定不同环境的IP地址</td>
 										</tr>
 
 										<tr>
@@ -108,19 +107,44 @@
 									<table>
 										<tr>
 											<td>Path:</td>
-											<td><input type="text" name="path" size="30"
-												value="/dataInterOper/operServlet/saveOperInfo" /></td>
-											<td><span class="help-block">输入接口请求路径</span></td>
+											<td><select name="path" style="width: 250px">
+													<option value="0" selected="selected">请选择接口地址</option>
+											</select></td>
 										</tr>
 
 										<tr>
 											<td>Method:</td>
-											<td><select name="requestmethod">
+											<td><select name="requestmethod" style="width: 100px">
 													<option value="get">GET</option>
 													<option value="post" selected="selected">POST</option>
 											</select></td>
 										</tr>
-									</table>
+										
+			<!-- 							<tr>
+											<td>Http Header:</td>
+										</tr>
+										<tr>
+											<table id="headerTable"
+												class="table table-bordered table-condensed">
+												<thead>
+													<tr>
+														<th width="45%">name</th>
+														<th width="45%">value</th>
+														<th width="10%">
+															<div class="span12">
+																<button id="addHeaderBtn" type="button"
+																	style="float: none; opacity: 0.6; font-weight: normal;">add</button>
+															</div>
+														</th>
+													</tr>
+												</thead>
+												<tbody id="headertbody">
+															<tr class="success/error/warning/info">
+
+												</tbody>
+											</table>
+										</tr>
+						 -->			</table>
 								</fieldset>
 								<br />
 								<fieldset>
@@ -149,7 +173,7 @@
 																		<th width="45%">value</th>
 																		<th width="10%">
 																			<div class="span12">
-																				<button id="addbtn" type="button"
+																				<button id="addParamBtn" type="button"
 																					style="float: none; opacity: 0.6; font-weight: normal;">add</button>
 																			</div>
 																		</th>
@@ -170,8 +194,6 @@
 															</div>
 															<span class="help-block">输入接口请求参数</span>
 														</div>
-
-
 													</div>
 												</div>
 											</div>
@@ -245,9 +267,10 @@
 								</fieldset>
 								<br />
 								<div>
-									<input type="hidden" value="" name="type" id="type" /> <input
-										type="hidden" value="1" name="paramType" id="paramType" /> <input
-										type="hidden" value="0" name="paramCount" id="paramCount" />
+									<input type="hidden" value="" name="type" id="type" /> 
+									<input type="hidden" value="1" name="paramType" id="paramType" /> 
+									<input type="hidden" value="0" name="paramCount" id="paramCount" />
+									<input type="hidden" value="0" name="headerCount" id="headerCount" />
 								</div>
 							</div>
 						</div>

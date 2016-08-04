@@ -7,7 +7,6 @@ function Change(obj) {
 	}
 }
 
-
 function assignValue() {
 	var value = document.getElementById("defineValue").value;
 	document.getElementById("define").value = value;
@@ -90,22 +89,7 @@ function submitPlan() {
 	return false;
 }
 
-function deleteTr(nowTr) {
-	var paramCount = parseInt($("#paramCount").val()); /* String 转 Int */
-	paramCount = paramCount - 1;
-	$("#paramCount").val(paramCount);
-	$(nowTr).parent().parent().remove();
-	// alert($("#paramCount").val());
 
-	$("input:text", $("#paramTable")).each(function() {
-		if ($(this).parent().index() == 0) {
-			var strName = "paramName" + $(this).parent().parent().index();
-		} else if ($(this).parent().index() == 1) {
-			var strName = "paramValue" + $(this).parent().parent().index();
-		}
-		$(this).attr("name", strName);
-	});
-}
 
 function setParamType(type) {
 	// type = 1, parameter type=2,BodyData
@@ -121,79 +105,222 @@ function showParamName() {
 	});
 }
 
-$(function() {
-	$("#project").change(function() {
-		var serviceId = $(this).val();
-		$("#ip").val("");
-		$("#port").val("");
-		if (serviceId != null) {
+/**
+ * 判断元素是否为空
+ * 
+ * @param obj
+ * @returns {Boolean}
+ */
+function isEmptyObject(obj) {
+	for ( var key in obj) {
+		return false;
+	}
+	return true;
+}
 
-			var url = "performServlet?method=getServiceIp";
-			var args = {
-				"id" : serviceId
-			};
+/**
+ * 切换工程名称时，自动填入IP地址和端口号
+ */
+function changeToAddIP() {
+//	var serviceId = $(this).val();
+	var serviceId = $("#project option:selected").val();
 
-			$.getJSON(url, args, function(data) {
-				if (data.length == 0) {
-					alert("请输入IP地址，端口号");
-				} else {
-					if (data.prdomain != null) {
-						$("#ip").val(data.prdomain);
-					} else if($("#environment").val() == "1"){
-						$("#ip").val(data.devIp);
-					} else if($("#environment").val() == 2){
-						$("#ip").val(data.testIp);
-					} else if($("#environment").val() == 3){
-						$("#ip").val(data.preproPubIP);
+	$("#ip").val("");
+	$("#port").val("");
+	if (serviceId != null) {
+		var url = "performServlet?method=getServiceIp";
+		var args = {
+			"id" : serviceId
+		};
+		$.getJSON(url, args, function (data) {
+
+			if (data.length == 0) {
+				alert("请输入IP地址，端口号");
+			} else {
+				if (!isEmptyObject(data.prdomain)) {
+					$("#ip").val(data.prdomain);
+					$("#domainInfo").show();
+				} else if ($("#environment").val() == 1) {
+					$("#ip").val(data.devIp);
+					$("#domainInfo").hide();
+				} else if ($("#environment").val() == 2) {
+					$("#ip").val(data.testIp);
+					$("#domainInfo").hide();
+				} else if ($("#environment").val() == 3) {
+					if (!isEmptyObject(data.preproPubIp)) {
+						var preproIP = data.preproPubIp;
+						var preIP = preproIP.substr(0, preproIP.length - 5);
 					}
-					$("#port").val("8081");
+					$("#ip").val(preIP);
+					$("#domainInfo").hide();
+				}
+				$("#port").val("8081");
+			}
+		});
+	}
+}
+
+/**
+ * 点击add按钮 添加 header和parameter
+ */
+function addNewLine(type){
+//	alert(type);
+	//type =1  添加Header  Type=2 添加param
+	if(type == 1){
+		var count = parseInt($("#headerCount").val()); /*String 转 Int */
+		var typeName = "header";
+		var tr = makeTr(type,typeName,count);
+		if (count == 0) {
+			$("#headertbody").append(tr);
+			$("#headerCount").val(count + 1);
+			// alert($("#paramCount").val());
+		} else {
+			/* 判断input是否为空 */
+			var flag = true;
+			$("input:text", $("#headerTable")).each(function() {
+				if ($(this).val().trim() == "") {
+					$(this).val("");
+					alert("有空参数");
+					flag = false;
+					return false;
 				}
 			});
+			
+			if (flag) {
+				$("#headertbody").append(tr);
+				$("#headerCount").val(count + 1);
+				// alert($("#paramCount").val());
+			}
 		}
+		return false;
 
+	}else if(type == 2){
+		var count = parseInt($("#paramCount").val()); /*String 转 Int */
+		var typeName = "param";
+		var tr = makeTr(type,typeName,count);
+		if (count == 0) {
+			$("#paramtbody").append(tr);
+			$("#paramCount").val(count + 1);
+			// alert($("#paramCount").val());
+		} else {
+			/* 判断input是否为空 */
+			var flag = true;
+			$("input:text", $("#paramTable")).each(function() {
+				if ($(this).val().trim() == "") {
+					$(this).val("");
+					alert("有空参数");
+					flag = false;
+					return false;
+				}
+			});
+			
+			if (flag) {
+				$("#paramtbody").append(tr);
+				$("#paramCount").val(count + 1);
+				// alert($("#paramCount").val());
+			}
+		}
+		return false;
+	}
+
+
+}
+
+/**
+ * 拼接table的 tr 源码
+ */
+function makeTr(type,typeName,count){
+	var tr = "<tr><td><input type=\"text\" "
+		tr += "name=\"" + typeName + "Name" + count + "\"";
+		tr += "style=\"border: none;box-shadow:none\" >"
+		tr += "<td><input type=\"text\" "
+		tr += "name=\"" + typeName + "Value" + count + "\"";
+		tr += "style=\"border: none;box-shadow:none\" ></td>"
+		tr += "<td><button class=\"delbtn close\" type=\"button\" class=\"close\" style=\"float:left;margin-left: 2px\" onclick=\"deleteTr(this," + type + ")\" >×</button></td></tr>";
+	return tr;
+}
+
+/**
+ * 点击 X 删除 当前行
+ */
+function deleteTr(nowTr,type) {
+	if(type == 1){
+		var count = parseInt($("#headerCount").val()); /* String 转 Int */
+		count = count - 1;
+		$("#headerCount").val(count);
+		$(nowTr).parent().parent().remove();
+		// alert($("#paramCount").val());
+		
+		$("input:text", $("#headerTable")).each(function() {
+			if ($(this).parent().index() == 0) {
+				var strName = "headerName" + $(this).parent().parent().index();
+			} else if ($(this).parent().index() == 1) {
+				var strName = "headerValue" + $(this).parent().parent().index();
+			}
+			$(this).attr("name", strName);
+		});		
+	}else if(type == 2){
+		var count = parseInt($("#paramCount").val()); /* String 转 Int */
+		count = count - 1;
+		$("#paramCount").val(count);
+		$(nowTr).parent().parent().remove();
+		// alert($("#paramCount").val());
+		
+		$("input:text", $("#paramTable")).each(function() {
+			if ($(this).parent().index() == 0) {
+				var strName = "paramName" + $(this).parent().parent().index();
+			} else if ($(this).parent().index() == 1) {
+				var strName = "paramValue" + $(this).parent().parent().index();
+			}
+			$(this).attr("name", strName);
+		});
+	}
+}
+
+/**
+ * 选择接口路径
+ */
+function selectPath(){
+	var warnameId = $("#project option:selected").val();
+
+	if (warnameId != null) {
+		var url = "performServlet?method=getApiPath";
+		var args = {
+			"id" : warnameId
+		};
+		$.getJSON(url, args, function (data) {
+
+			
+		});
+	}
+}
+
+
+
+/**
+ * 加载全局变量
+ */
+$(function() {
+	$("#project").change(changeToAddIP);
+	$("#environment").change(function (){
+		if($("#project option:selected").val() != 0){
+			changeToAddIP();
+		}
 	});
+		
 
 	// 增加单独接口配置页面
 	// 后期优化：增加和删除时，添加删除和修改标记，以便后期修改parameter表
-	$("#addbtn")
-			.click(
-					function() {
-						var paramCount = parseInt($("#paramCount").val()); /*
-																			 * String
-																			 * 转
-																			 * Int
-																			 */
-						var tr = "<tr><td><input type=\"text\" "
-						tr += "name=\"paramName" + paramCount + "\"";
-						tr += "style=\"border: none;box-shadow:none\" >"
-						tr += "<td><input type=\"text\" "
-						tr += "name=\"paramValue" + paramCount + "\"";
-						tr += "style=\"border: none;box-shadow:none\" ></td>"
-						tr += "<td><button class=\"delbtn close\" type=\"button\" class=\"close\" style=\"float:left;margin-left: 2px\" onclick=\"deleteTr(this)\" >×</button></td></tr>";
-
-						if (paramCount == 0) {
-							$("#paramtbody").append(tr);
-							$("#paramCount").val(paramCount + 1);
-							// alert($("#paramCount").val());
-						} else {
-							/* 判断input是否为空 */
-							var flag = true;
-							$("input:text", $("#paramTable")).each(function() {
-								if ($(this).val().trim() == "") {
-									$(this).val("");
-									alert("有空参数");
-									flag = false;
-									return false;
-								}
-							});
-
-							if (flag) {
-								$("#paramtbody").append(tr);
-								$("#paramCount").val(paramCount + 1);
-								// alert($("#paramCount").val());
-							}
-						}
-						return false;
-
-					});
+	$("#addHeaderBtn").click(function(){
+		addNewLine(1);
+	});
+	$("#addParamBtn").click(function(){
+		addNewLine(2);
+	});
+	$("#path").change(function(){
+		selectPath();
+	});
+	
+	
+	
 })
