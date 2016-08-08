@@ -27,14 +27,15 @@ public class ApiInfoDAOImpl extends DAO<ApiInfo> implements ApiInfoDAO {
 
 	@Override
 	public List<ApiInfo> getListWithWarnameId(String warnameId) {
-		// TODO Auto-generated method stub
-		return null;
+		String sql = "SELECT id,path from apiInfo where warnameid = ?";
+		return getForList(sql, warnameId);
+	
 	}
 
 	@Override
-	public ApiInfo get(String path) {
-		// TODO Auto-generated method stub
-		return null;
+	public ApiInfo get(String id) {
+		String sql = "SELECT id, path, warnameId, paramType, parameters, method from apiInfo where id = ?";
+		return get(sql, id);
 	}
 
 

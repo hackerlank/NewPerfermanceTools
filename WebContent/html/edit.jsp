@@ -81,6 +81,13 @@
 															}
 														}
 													%>
+												<%-- 
+												使用标签库需导入 jstl.jar和standerd.jar
+												<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+												
+												<c:forEach items="${serviceList }" var="location">
+    												<option value="${serviceList.id}">${serviceList.projectCN }</option>
+    											</c:forEach> --%>
 
 											</select></td>
 										</tr>
@@ -107,14 +114,14 @@
 									<table>
 										<tr>
 											<td>Path:</td>
-											<td><select name="path" style="width: 250px">
-													<option value="0" selected="selected">请选择接口地址</option>
+											<td><select id="path" name="path" style="width: 250px">
+													<option value="" ">请选择接口地址</option>
 											</select></td>
 										</tr>
 
 										<tr>
 											<td>Method:</td>
-											<td><select name="requestmethod" style="width: 100px">
+											<td><select id="requestmethod" name="requestmethod" style="width: 100px">
 													<option value="get">GET</option>
 													<option value="post" selected="selected">POST</option>
 											</select></td>
@@ -159,7 +166,8 @@
 															data-toggle="tab" onclick="setParamType(1)">Parameters</a>
 														</li>
 														<li><a href="#panel-974412" data-toggle="tab"
-															onclick="setParamType(2)">BodyData</a></li>
+															onclick="setParamType(2)">BodyData</a>
+														</li>
 													</ul>
 													<div class="tab-content">
 														<div class="tab-pane active" id="panel-141708">
@@ -189,7 +197,7 @@
 														</div>
 														<div class="tab-pane" id="panel-974412">
 															<div class="span12">
-																<textarea class="textdefine" name="parameters"
+																<textarea class="textdefine" name="parameters" id="bodyData"
 																	style="height: 100px"></textarea>
 															</div>
 															<span class="help-block">输入接口请求参数</span>
@@ -206,7 +214,7 @@
 								<br />
 								<button type="submit" class="btn" onclick="testAPI()">测试接口</button>
 
-								<button type="button" onclick="showParamName()">显示Param名称</button>
+								<button type="button" onclick="testActive()">显示Param名称</button>
 								<br />
 							</div>
 							<div class="tab-pane" id="panel-653429">

@@ -21,6 +21,7 @@ import org.apache.commons.logging.LogFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import cn.systoon.qc.dao.impl.ApiInfoDAOImpl;
+import cn.systoon.qc.dao.impl.ParametersDAOImpl;
 import cn.systoon.qc.dao.impl.ServiceListDAOImpl;
 import cn.systoon.qc.domain.ApiInfo;
 import cn.systoon.qc.domain.Parameters;
@@ -237,39 +238,63 @@ public class PerformServlet extends HttpServlet {
 
 	
 	protected void getServiceIp(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("edit");
+		System.out.println("getServiceIp");
 		String id = request.getParameter("id");
-		String env_id = request.getParameter("environment");
 		ServiceListDAOImpl serviceListDAOImpl = new ServiceListDAOImpl();
 		ServiceList servicelist = serviceListDAOImpl.getServiceById(id);
-		log.debug("debug: " + servicelist);
-		log.error("error: " + servicelist);
-		log.fatal("fatal: " + servicelist);
-		log.info("info: " + servicelist);
 		
 		ObjectMapper mapper = new ObjectMapper();
 		String result = mapper.writeValueAsString(servicelist);
-		log.info("*******************" + result);
+		log.info("********getServiceIp***********" + result);
 		response.setCharacterEncoding("UTF-8");
 		response.getWriter().println(result);
 		
 		
 	}
 	
-	protected void getApiPath(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("edit");
+	protected void getListApiPath(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		System.out.println("getListApiPath");
 		String id = request.getParameter("id");
 		ApiInfoDAOImpl apiInfoDAOImpl = new ApiInfoDAOImpl();
 		List<ApiInfo> apiInfoList = apiInfoDAOImpl.getListWithWarnameId(id);
-
+		System.out.println(apiInfoList);
 		
 		ObjectMapper mapper = new ObjectMapper();
 		String result = mapper.writeValueAsString(apiInfoList);
-		log.info("*******************" + result);
+		log.info("********getListApiPath***********" + result);
 		response.setCharacterEncoding("UTF-8");
 		response.getWriter().println(result);
+	}
+	
+	protected void getApiInfoById(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		System.out.println("getApiInfoById");
+		String id = request.getParameter("id");
+		System.out.println(id);
+		ApiInfoDAOImpl apiInfoDAOImpl = new ApiInfoDAOImpl();
+		ApiInfo apiInfo = apiInfoDAOImpl.get(id);
+		System.out.println(apiInfo);
 		
+		ObjectMapper mapper = new ObjectMapper();
+		String result = mapper.writeValueAsString(apiInfo);
+		log.info("********getListApiPath***********" + result);
+		response.setCharacterEncoding("UTF-8");
+		response.getWriter().println(result);
+	}
+	
+	protected void getParametersByApiId(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		System.out.println("getParametersByApiId");
+		String id = request.getParameter("id");
+		Integer apiId = Integer.valueOf(id).intValue();
+		System.out.println(apiId);
+		ParametersDAOImpl parametersDAOImpl = new ParametersDAOImpl();
+		List<Parameters> parametersList = parametersDAOImpl.getListWithApiId(apiId);
+		System.out.println(parametersList);
 		
+		ObjectMapper mapper = new ObjectMapper();
+		String result = mapper.writeValueAsString(parametersList);
+		log.info("********getParametersByApiId***********" + result);
+		response.setCharacterEncoding("UTF-8");
+		response.getWriter().println(result);
 	}
 	
 	

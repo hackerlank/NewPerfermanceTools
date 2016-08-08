@@ -28,10 +28,10 @@ public class ApiInfo {
 	public void setWarnameId(String warnameId) {
 		this.warnameId = warnameId;
 	}
-	public int getParamType() {
+	public Integer getParamType() {
 		return paramType;
 	}
-	public void setParamType(int paramType) {
+	public void setParamType(Integer paramType) {
 		this.paramType = paramType;
 	}
 	public String getParameters() {
@@ -46,7 +46,7 @@ public class ApiInfo {
 	public void setMethod(String method) {
 		this.method = method;
 	}
-	public ApiInfo(Integer id, String path, String warnameId, int paramType, String parameters, String method) {
+	public ApiInfo(Integer id, String path, String warnameId, Integer paramType, String parameters, String method) {
 		super();
 		this.id = id;
 		this.path = path;
