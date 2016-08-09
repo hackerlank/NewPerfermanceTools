@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.client.utils.HttpClientUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -28,7 +29,6 @@ import cn.systoon.qc.domain.Parameters;
 import cn.systoon.qc.domain.ServiceList;
 import cn.systoon.qc.jmxhandler.JmxParserDom4jHandler;
 import cn.systoon.qc.utils.HttpClientUtil;
-import cn.systoon.qc.utils.HttpUtils;
 
 /**
  * Servlet implementation class PerformServlet
@@ -165,7 +165,7 @@ public class PerformServlet extends HttpServlet {
 		if(requestMethod.equals("get")){
 			if(paramTypeInt == 1){
 				if(!params.isEmpty()){
-					result = HttpUtils.doGetForm(url, params, "utf-8");
+					result = HttpClientUtils.doGetForm(url, params, "utf-8");
 				}
 			}else if(paramTypeInt == 2){
 				url = url + "?" + parameters;
