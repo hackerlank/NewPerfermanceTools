@@ -214,7 +214,7 @@
 								<br />
 								<button type="submit" class="btn" onclick="testAPI()">测试接口</button>
 
-								<button type="button" onclick="testActive()">显示Param名称</button>
+								<button type="button" onclick="testActive(1)">显示Param名称</button>
 								<br />
 							</div>
 							<div class="tab-pane" id="panel-653429">
@@ -276,6 +276,7 @@
 								<br />
 								<div>
 									<input type="hidden" value="" name="type" id="type" /> 
+									<input type="hidden" value="" name="pathText" id="pathText" /> 
 									<input type="hidden" value="1" name="paramType" id="paramType" /> 
 									<input type="hidden" value="0" name="paramCount" id="paramCount" />
 									<input type="hidden" value="0" name="headerCount" id="headerCount" />

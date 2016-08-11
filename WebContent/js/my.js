@@ -92,7 +92,7 @@ function submitPlan() {
 
 
 function setParamType(type) {
-	// type = 1, parameter type=2,BodyData
+	// type = 1, k-v type=2,BodyData
 	$("#paramType").val(type);
 
 }
@@ -262,6 +262,7 @@ function changeToAddMethod(){
 	
 //	var pathId = $("this").val();
 	var pathId = $("#path option:selected").val();
+	$("#pathText").val($("#path option:selected").text());
 	if(pathId != ""){
 		var url = "performServlet?method=getApiInfoById";
 		var args = {"id":pathId};
@@ -272,9 +273,9 @@ function changeToAddMethod(){
 			} else {
 				//获取method，并选中对应方法  method = 1 代表get方法  method=2 代表Post方法
 				if(data.method == 1){
-					$("#requestmethod").find("option[value='get']").attr("selected",true);
-				}else{
-					$("#requestmethod").find("option[value='post']").attr("selected",true);
+					$("#requestmethod").val("get");
+				}else if(data.method == 2){
+					$("#requestmethod").val("post");
 				}
 				
 				//获取paramType =1 表示 kv模式  paramType=2 表示 body模式
@@ -286,6 +287,7 @@ function changeToAddMethod(){
 					$("#tabs-52171 ul li:first a").attr("aria-expanded","false");
 					$("#panel-974412").attr("class","tab-pane active");
 					$("#bodyData").text(data.parameters);
+					$("#paramType").val(data.paramType);
 					
 				}else if(data.paramType == 1){
 					$("#tabs-52171 ul li:last").attr("class","");
@@ -294,6 +296,7 @@ function changeToAddMethod(){
 					$("#tabs-52171 ul li:first").attr("class","tab-pane active");
 					$("#tabs-52171 ul li:first a").attr("aria-expanded","true");
 					$("#panel-974412").attr("class","tab-pane");
+					$("#paramType").val(data.paramType);
 					getParameters(pathId);
 				}
 				
@@ -313,11 +316,12 @@ function getParameters(apiId){
 		if (data.length == 0) {
 			alert("请配置请求参数");
 		} else {
-			for(var i=1;i<data.length+1;i++){
+			$("#paramCount").val(data.length);
+			for(var i=0;i<data.length;i++){
 				var tr = makeTr(2,"param",i,data[i].paramName,data[i].paramValue);
 				$("#paramtbody").append(tr);
 			}
-			$("#paramCount").val(data.length);
+			
 			
 		}
 	});
@@ -408,14 +412,24 @@ $(function() {
 	
 })
 
-function testActive(){
+function testActive(type){
 //	$("#tabs-52171 ul li:last").attr("class","active");
 //	$("#tabs-52171 ul li:last a").attr("aria-expanded","true");
 //	$("#panel-141708").attr("class","tab-pane");
 //	$("#tabs-52171 ul li:first").attr("class","");
 //	$("#tabs-52171 ul li:first a").attr("aria-expanded","false");
 //	$("#panel-974412").attr("class","tab-pane active");
-	$("#bodyData").empty();
-	$("#paramtbody").empty();
+//	if(type%2 == 0){
+//		$("#requestmethod").find("option[value='post']").attr("selected",false);
+//		$("#requestmethod").find("option[value='get']").attr("selected",true);
+//	}
+//	else{
+//		$("#requestmethod").find("option[value='post']").attr("selected",true);
+//		$("#requestmethod").find("option[value='get']").attr("selected",false);
+//	}
+	alter((type % 2));
+	//testActive(type+1);
+
+	
 	
 }

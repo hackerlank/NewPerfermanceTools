@@ -28,7 +28,7 @@ import cn.systoon.qc.domain.ApiInfo;
 import cn.systoon.qc.domain.Parameters;
 import cn.systoon.qc.domain.ServiceList;
 import cn.systoon.qc.jmxhandler.JmxParserDom4jHandler;
-import cn.systoon.qc.utils.HttpClientUtil;
+import cn.systoon.qc.utils.HttpUtils;
 
 /**
  * Servlet implementation class PerformServlet
@@ -117,7 +117,7 @@ public class PerformServlet extends HttpServlet {
 	
 	
 	protected Boolean test(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Boolean flag;
+		Boolean flag = false;
 		
 		/**
 		 * 处理ApiInfo表中的数据
@@ -130,73 +130,104 @@ public class PerformServlet extends HttpServlet {
 		String result = null;
 		List<Object> resultList = null;
 		
-		warnameId = request.getParameter("project");
-		path = request.getParameter("path");
+		//warnameId = request.getParameter("project");
+		path = request.getParameter("pathText");
 		requestMethod = request.getParameter("requestmethod");
 		paramType = request.getParameter("paramType");
 		
-		parameters = request.getParameter("parameters");
+		System.out.println("###############");
+		System.out.println("paramType ==> " + paramType);
+		System.out.println("requestMethod ==> " + requestMethod);
+		System.out.println("path ==> " + path);
+		url = "http://" + ip + ":" + port + path;
+		
+		//parameters = request.getParameter("parameters");
 		if(paramType != null){
 			paramTypeInt = Integer.parseInt(paramType);
 		}
-		ApiInfo apiInfo = new ApiInfo(id, path, warnameId, paramTypeInt, parameters, requestMethod);
-		Integer apiId = null; //写入parameters表中的关联apiId；
-		/**
-		 * 处理parameters表中的数据
-		 * 当paramType ＝ 1时表示 key－value模式
-		 */
+		
+
+		
+		//如果接口信息做了修改，那么将新的信息更新到ApiInfo表中 需要返回ApiId。
+		//后期实现（或者不实现）
+		//ApiInfo apiInfo = new ApiInfo(id, path, warnameId, paramTypeInt, parameters, requestMethod);
+		//Integer apiId = null; //写入parameters表中的关联apiId；
+//		
+//		/**
+//		 * 处理parameters表中的数据
+//		 * 当paramType ＝ 1时表示 key－value模式
+//		 */
 		if(paramTypeInt == 1){
+			System.out.println("*****key-value*****");
 			paramCount = request.getParameter("paramCount");
+			System.out.println(paramCount);
+			
 			int count = Integer.parseInt(paramCount);
 			for(int i = 0; i < count;i++){
 				String paramName = request.getParameter("paramName" + i);
 				String paramValue = request.getParameter("paramValue" + i);
 				
-				paramList.add(new Parameters(apiId, paramName, paramValue));
+				//将params数据写入到param表中
+				//paramList.add(new Parameters(apiId, paramName, paramValue));
 				
 				if(StringUtils.isNotEmpty(paramName) && StringUtils.isNotEmpty(paramValue)){
 					params.put(paramName, paramValue);
 				}
 				
 			}
-			
+			System.out.println(params);
+		}else if(paramTypeInt == 2){
+			parameters = request.getParameter("parameters");
+			System.out.println(parameters);
 		}
 		
+
+//		
+//		System.out.println(requestMethod);
+//		
+//		
 		if(requestMethod.equals("get")){
 			if(paramTypeInt == 1){
 				if(!params.isEmpty()){
-					result = HttpClientUtils.doGetForm(url, params, "utf-8");
+					result = HttpUtils.doGetForm(url, params, "utf-8");
 				}
 			}else if(paramTypeInt == 2){
 				url = url + "?" + parameters;
 				result = HttpUtils.doGetStrReq(url, "utf-8");
 			}
 		}else if(requestMethod.equals("post")){
-			postHeader.put("Content-Type", "application/json");
+			//postHeader.put("Content-Type", "application/json");
 			if(paramTypeInt == 1){
 				if(!params.isEmpty()){
-					resultList = HttpUtils.doPostFormReq(url, postHeader, params, "utf-8");
+					resultList = HttpUtils.doPostFormReq(url, null,params, "utf-8");
 				}
 				parameters = params.toString();
 				result = resultList.toString();
 			}else if(paramTypeInt == 2){
-				result = HttpUtils.doPostStringReq(url, postHeader, parameters, "utf-8");
+				
+				System.out.println("*********&&&&&&&&&********");
+				result = HttpUtils.doPostStringReq(url, parameters, "utf-8");
 			}
 		}
-		if(StringUtils.isNotEmpty(result)){
-			flag = true;
-		}else{
-			flag = false;
-		}
-		response.setCharacterEncoding("UTF-8");
-		response.getWriter().println("请求信息：" + "<br>");
-		response.getWriter().println("请求url：" + url);
-		response.getWriter().println("请求参数：");
-		response.getWriter().println("请求parameter：" + parameters);
-		response.getWriter().println("");
-		response.getWriter().println("请求结果：");
-		response.getWriter().println(result);
 		
+		
+		System.out.println(result);
+//		
+//		
+//		if(StringUtils.isNotEmpty(result)){
+//			flag = true;
+//		}else{
+//			flag = false;
+//		}
+//		response.setCharacterEncoding("UTF-8");
+//		response.getWriter().println("请求信息：" + "<br>");
+//		response.getWriter().println("请求url：" + url);
+//		response.getWriter().println("请求参数：");
+//		response.getWriter().println("请求parameter：" + parameters);
+//		response.getWriter().println("");
+//		response.getWriter().println("请求结果：");
+//		response.getWriter().println(result);
+//		
 		//抛出异常时，未处理，异常信息也没有打印到屏幕上，待处理。。。。。
 		return flag;
 	}
