@@ -1,5 +1,6 @@
 package cn.systoon.qc.utils;
 
+import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -9,9 +10,11 @@ import java.util.Map;
 import javax.net.ssl.SSLContext;
 import javax.swing.plaf.synth.SynthSeparatorUI;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpException;
 import org.apache.http.NameValuePair;
+import org.apache.http.ParseException;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -197,15 +200,25 @@ public class HttpUtils {
             if(pairs != null && pairs.size() > 0){
                 httpPost.setEntity(new UrlEncodedFormEntity(pairs,charset));
             }
+            
+            //打印请求信息
+            printPostRequestInfo(httpPost);
+            
             Date start_date=new Date();
+            System.out.println(start_date);
             CloseableHttpResponse response = httpClient.execute(httpPost);
             Date end_date=new Date();
+            System.out.println(end_date);
             int statusCode = response.getStatusLine().getStatusCode();
             result.add(statusCode);
             if (statusCode != 200) {
-                httpPost.abort();
-                throw new RuntimeException("HttpClient,error status code :" + statusCode);
+//                httpPost.abort();
+//                throw new RuntimeException("HttpClient,error status code :" + statusCode);
+            	return result;
             }
+            
+            System.out.println("请求耗时：" + (end_date.getTime()-start_date.getTime()));
+            
             HttpEntity entity = response.getEntity();
             	
             if (entity != null){
@@ -242,11 +255,16 @@ public class HttpUtils {
             	httpPost.addHeader(key, value);
             }
             httpPost.setEntity(strEntity);
+            
+            //打印请求信息
+            printPostRequestInfo(httpPost);
+            
             CloseableHttpResponse response = httpClient.execute(httpPost);
             int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode != 200) {
-                httpPost.abort();
-                throw new RuntimeException("HttpClient,error status code :" + statusCode);
+                //httpPost.abort();
+                return "HttpClient,error status code :" + statusCode;
+                //throw new RuntimeException("HttpClient,error status code :" + statusCode);
             }
             HttpEntity entity = response.getEntity();
 
@@ -284,8 +302,9 @@ public class HttpUtils {
             
             httpPost.setEntity(strEntity);
             
-            System.out.println(strRequest);
-            System.out.println(httpPost.getEntity().toString());
+          //打印请求信息
+            printPostRequestInfo(httpPost);
+        
 
             CloseableHttpResponse response = httpClient.execute(httpPost);
             int statusCode = response.getStatusLine().getStatusCode();
@@ -306,4 +325,31 @@ public class HttpUtils {
         }
         return result;
     } 
+    
+    /**
+     * 打印请求信息
+     * @param httpPost
+     */
+    public static void printPostRequestInfo(HttpPost httpPost){
+    	String result = null;
+        
+    	//打印请求首行
+    	System.out.println("request request:\n" + httpPost.getRequestLine());
+        //打印请求头 
+        Header[] hs = httpPost.getAllHeaders();
+        for(Header header:hs){
+        	System.out.println(header.toString());
+        }
+        
+        //打印请求实体
+        HttpEntity requestEntity = httpPost.getEntity();
+        try {
+			result = EntityUtils.toString(requestEntity, CHARSET);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+        
+       
+        System.out.println(result);
+    }
 }

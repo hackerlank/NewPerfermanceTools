@@ -30,7 +30,7 @@
 
 	<%
 		List<ServiceList> serviceLists = null;
-		serviceLists = (List<ServiceList>) request.getAttribute("serviceLists");
+		serviceLists = (List<ServiceList>) application.getAttribute("serviceLists");
 	%>
 
 	<%@include file="/html/header.jspf"%>
@@ -221,13 +221,13 @@
 								<fieldset>
 									<legend>并发用户数</legend>
 									<input type="radio" name="vuser" value="10"
-										onclick="Change('0')" checked="checked" />10 <input
-										type="radio" name="vuser" value="50" onclick="Change('0')" />50
+										onclick="Change('0')" checked="checked" /> 10 <input
+										type="radio" name="vuser" value="50" onclick="Change('0')" /> 50
 									<input type="radio" name="vuser" value="100"
-										onclick="Change('0')" />100 <input type="radio" name="vuser"
-										value="200" onclick="Change('0')" />200 <input type="radio"
-										name="vuser" value="500" onclick="Change('0')" />500 <input
-										type="radio" name="vuser" value="1000" onclick="Change('0')" />1000
+										onclick="Change('0')" /> 100 <input type="radio" name="vuser"
+										value="200" onclick="Change('0')" /> 200 <input type="radio"
+										name="vuser" value="500" onclick="Change('0')" /> 500 <input
+										type="radio" name="vuser" value="1000" onclick="Change('0')" /> 1000
 									<input id="define" type="radio" name="vuser"
 										onclick="Change('1')" />自定义<input id="defineValue"
 										type="hidden" name="vuser" size="30" onchange="assignValue()" />
@@ -246,11 +246,25 @@
 
 								<fieldset>
 									<legend>响应断言</legend>
+									<h4>要测试的响应字段</h4>
+									<input type="radio" name="test_field" value="1" checked="checked"/> 响应文本 
+									<input type="radio" name="test_field" value="2"/> Document(text) 
+									<input type="radio" name="test_field" value="3"/> URL样本 
+									<input type="radio" name="test_field" value="4"/> 响应代码 
+									<input type="radio" name="test_field" value="5"/> 响应信息
+									<input type="radio" name="test_field" value="6"/> Response Headers <br>
+									<!-- <input type="checkbox" name="assume_success"/ value="1"> Ignore Status  -->
+									
+									<h4>模式匹配规则</h4>
+									<input type="radio" name="test_type" value="2" checked="checked"/> 包括 
+									<input type="radio" name="test_type" value="1"/> 匹配
+									<input type="radio" name="test_type" value="8"/> Equals
+									<input type="radio" name="test_type" value="16"/> SubString 
+									
+									<!-- <input type="checkbox" name="test_type"/ value="20"> 否  -->
+									<h4>断言内容</h4>
 									<textarea class="textdefine" name="assertion"></textarea>
-									<div class="alert">
-										<button type="button" class="close">×</button>
-										<strong>提示</strong> 输入断言的参数结果，即：响应信息中只要包含所填写的参数文本信息，就表示成功。
-									</div>
+								
 								</fieldset>
 								<!-- <h4>保存文档</h4> -->
 								<fieldset>

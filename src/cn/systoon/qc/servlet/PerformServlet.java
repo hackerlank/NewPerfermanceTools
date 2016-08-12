@@ -1,6 +1,5 @@
 package cn.systoon.qc.servlet;
 
-import java.awt.image.RescaleOp;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -8,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.client.utils.HttpClientUtils;
+import org.apache.tomcat.dbcp.pool.impl.GenericKeyedObjectPool.Config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -33,7 +33,7 @@ import cn.systoon.qc.utils.HttpUtils;
 /**
  * Servlet implementation class PerformServlet
  */
-@WebServlet("/performServlet")
+@WebServlet(urlPatterns = {"/performServlet"}, loadOnStartup = 1)
 public class PerformServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -74,6 +74,16 @@ public class PerformServlet extends HttpServlet {
 	
 	private static Log log = LogFactory.getLog(PerformServlet.class);
 
+	@Override
+	public void init() throws ServletException {
+		// TODO Auto-generated method stub
+		super.init();
+		ServiceListDAOImpl serviceListDAOImpl = new ServiceListDAOImpl();
+		List<ServiceList> serviceLists = serviceListDAOImpl.getAll();
+		this.getServletContext().setAttribute("serviceLists", serviceLists);
+		System.out.println(serviceLists);
+	}
+	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doPost(request, response);
 	}
@@ -93,20 +103,7 @@ public class PerformServlet extends HttpServlet {
 			port = "80";
 		}
 		url = "http://" + ip + ":" + port + path;
-//		
-//		System.out.println("ip：" + ip);
-//		System.out.println("port：" + port);
-//		System.out.println("path：" + path);
-//		System.out.println("parameters：" + parameters);
-//		System.out.println("requestMethod：" + requestMethod);
-//		System.out.println("vuser：" + vuser);
-//		System.out.println("assertion：" + assertion);
-//		System.out.println("duration：" + duration);
-//		System.out.println("jmxPlan：" + jmxPlan);
-//		System.out.println("descript：" + descript);
-//		System.out.println("methodName：" + methodName);
-//		System.out.println("url：" + url);
-		
+	
 		try {
 			Method method = getClass().getDeclaredMethod(methodName, HttpServletRequest.class,HttpServletResponse.class);
 			method.invoke(this, request,response);
@@ -197,37 +194,36 @@ public class PerformServlet extends HttpServlet {
 			}
 		}else if(requestMethod.equals("post")){
 			//postHeader.put("Content-Type", "application/json");
+			postHeader.put("Content-Type", "application/x-www-form-urlencoded");
 			if(paramTypeInt == 1){
 				if(!params.isEmpty()){
-					resultList = HttpUtils.doPostFormReq(url, null,params, "utf-8");
+					resultList = HttpUtils.doPostFormReq(url, postHeader,params, "utf-8");
 				}
 				parameters = params.toString();
 				result = resultList.toString();
 			}else if(paramTypeInt == 2){
 				
 				System.out.println("*********&&&&&&&&&********");
-				result = HttpUtils.doPostStringReq(url, parameters, "utf-8");
+				result = HttpUtils.doPostStringReq(url, postHeader, parameters, "utf-8");
 			}
 		}
 		
 		
-		System.out.println(result);
-//		
-//		
-//		if(StringUtils.isNotEmpty(result)){
-//			flag = true;
-//		}else{
-//			flag = false;
-//		}
-//		response.setCharacterEncoding("UTF-8");
+		
+		if(StringUtils.isNotEmpty(result)){
+			flag = true;
+		}else{
+			flag = false;
+		}
+		response.setCharacterEncoding("UTF-8");
 //		response.getWriter().println("请求信息：" + "<br>");
 //		response.getWriter().println("请求url：" + url);
 //		response.getWriter().println("请求参数：");
 //		response.getWriter().println("请求parameter：" + parameters);
 //		response.getWriter().println("");
-//		response.getWriter().println("请求结果：");
-//		response.getWriter().println(result);
-//		
+		response.getWriter().println("请求结果：");
+		response.getWriter().println(result);
+		
 		//抛出异常时，未处理，异常信息也没有打印到屏幕上，待处理。。。。。
 		return flag;
 	}
