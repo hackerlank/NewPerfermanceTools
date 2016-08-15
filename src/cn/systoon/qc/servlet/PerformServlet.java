@@ -119,11 +119,9 @@ public class PerformServlet extends HttpServlet {
 		/**
 		 * 处理ApiInfo表中的数据
 		 */
-		Integer id = null;
 		Integer paramTypeInt = null;
 		Map<String,String> params = new HashMap<String,String>();
 		Map<String,String> postHeader = new HashMap<String,String>();
-		List<Parameters> paramList = new ArrayList<Parameters>();
 		String result = null;
 		List<Object> resultList = null;
 		
@@ -221,7 +219,7 @@ public class PerformServlet extends HttpServlet {
 //		response.getWriter().println("请求参数：");
 //		response.getWriter().println("请求parameter：" + parameters);
 //		response.getWriter().println("");
-		response.getWriter().println("请求结果：");
+		response.getWriter().println("请求结果："+ "<br>");
 		response.getWriter().println(result);
 		
 		//抛出异常时，未处理，异常信息也没有打印到屏幕上，待处理。。。。。

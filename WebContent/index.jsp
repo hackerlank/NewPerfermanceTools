@@ -50,7 +50,7 @@
 						</h1>
 						<div class="row placeholders">
 							<div id="editbtn" class="col-xs-6 col-sm-3 placeholder">
-								<a href="performServlet?method=edit"><img alt="200x200" class="img-responsive" src="svg/edit.svg" /></a>
+								<a href="html/edit.jsp"><img alt="200x200" class="img-responsive" src="svg/edit.svg" /></a>
 								<h4>
 									编辑测试计划
 								</h4> <span class="text-muted">创建、修改测试计划</span>

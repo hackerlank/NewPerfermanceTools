@@ -42,12 +42,12 @@ function removeChildren(pnode) {
 }
 
 function testAPI() {
-	var logNode = document.getElementById("console");
+	var logNode = document.getElementById("console_edit");
 	removeChildren(logNode);
 	document.getElementById("type").value = "test";
 }
 function savePlan() {
-	var logNode = document.getElementById("console");
+	var logNode = document.getElementById("console_edit");
 	removeChildren(logNode);
 	document.getElementById("type").value = "save";
 }
@@ -63,9 +63,9 @@ function cc() {
 function submitPlan() {
 	var url;
 	if (document.getElementById("type").value == "save") {
-		url = "performServlet?method=save";
+		url = "../performServlet?method=save";
 	} else if (document.getElementById("type").value == "test") {
-		url = "performServlet?method=test";
+		url = "../performServlet?method=test";
 		// url = "performServlet?method=getServiceIp";
 	}
 	if (checkEmpty()) {
@@ -78,7 +78,7 @@ function submitPlan() {
 				 * var text=$("<p></p>").text(msg);
 				 * $("#console").append(text);
 				 */
-				$("#console").html(msg);
+				$("#console_edit").html(msg);
 			},
 			error : function(xhr) {
 				alert("错误提示： " + xhr.status + " " + xhr.statusText);
@@ -127,7 +127,7 @@ function changeToAddIP() {
 	$("#ip").val("");
 	$("#port").val("");
 	if (serviceId != null) {
-		var url = "performServlet?method=getServiceIp";
+		var url = "../performServlet?method=getServiceIp";
 		var args = {"id" : serviceId};
 		$.getJSON(url, args, function (data) {
 
@@ -166,10 +166,15 @@ function changeToAddPath() {
 	
 	//清空path下除第一行以外的数据
 	$("#path option:not(:first)").remove();
+	
+	//清空parameters
+	$("#bodyData").empty();
+	$("#paramtbody").empty();
+	$("#paramCount").val(0);
 
 	//获取Path路径
 	if (serviceId != null) {
-		var url = "performServlet?method=getListApiPath";
+		var url = "../performServlet?method=getListApiPath";
 		var args = {"id" : serviceId};
 		$.getJSON(url, args, function (data) {
 			
@@ -258,13 +263,14 @@ function changeToAddMethod(){
 	$("#bodyData").empty();
 	$("#paramtbody").empty();
 	$("#paramCount").val(0);
+	$("#console_edit").empty();
 	
 	
 //	var pathId = $("this").val();
 	var pathId = $("#path option:selected").val();
 	$("#pathText").val($("#path option:selected").text());
 	if(pathId != ""){
-		var url = "performServlet?method=getApiInfoById";
+		var url = "../performServlet?method=getApiInfoById";
 		var args = {"id":pathId};
 		$.getJSON(url, args, function (data) {
 			
@@ -310,7 +316,7 @@ function changeToAddMethod(){
  */
 function getParameters(apiId){
 	var args = {"id":apiId};
-	var url = "performServlet?method=getParametersByApiId";
+	var url = "../performServlet?method=getParametersByApiId";
 	$.getJSON(url, args, function (data) {
 		
 		if (data.length == 0) {
@@ -412,6 +418,13 @@ $(function() {
 	
 })
 
+/**
+ * 执行测试计划
+ */
+function runTest(){
+	
+}
+
 function testActive(type){
 //	$("#tabs-52171 ul li:last").attr("class","active");
 //	$("#tabs-52171 ul li:last a").attr("aria-expanded","true");
@@ -429,7 +442,5 @@ function testActive(type){
 //	}
 	alter((type % 2));
 	//testActive(type+1);
-
-	
 	
 }

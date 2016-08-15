@@ -7,18 +7,18 @@
 <html>
 <head>
 <script type="text/javascript"
-	src="<%=request.getContextPath()%>/js/jquery-2.0.0.min.js"></script>
+	src="<%=application.getContextPath()%>/js/jquery-2.0.0.min.js"></script>
 <script type="text/javascript"
-	src="<%=request.getContextPath()%>/js/jquery-ui.js"></script>
+	src="<%=application.getContextPath()%>/js/jquery-ui.js"></script>
 <script type="text/javascript"
-	src="<%=request.getContextPath()%>/js/bootstrap.min.js"></script>
+	src="<%=application.getContextPath()%>/js/bootstrap.min.js"></script>
 <script type="text/javascript"
-	src="<%=request.getContextPath()%>/js/my.js"></script>
+	src="<%=application.getContextPath()%>/js/edit.js"></script>
 <link rel="stylesheet"
-	href="<%=request.getContextPath()%>/css/bootstrap-combined.min.css"
+	href="<%=application.getContextPath()%>/css/bootstrap-combined.min.css"
 	media="screen" />
 <link rel="stylesheet"
-	href="<%=request.getContextPath()%>/css/common.css" />
+	href="<%=application.getContextPath()%>/css/common.css" />
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>edit</title>
 <script type="text/javascript">
@@ -310,7 +310,7 @@
 					<div class="tab-pane active" id="panel-913764">
 						<fieldset>
 							<legend>console</legend>
-							<div id="console"></div>
+							<div id="console_edit"></div>
 						</fieldset>
 					</div>
 				</div>
