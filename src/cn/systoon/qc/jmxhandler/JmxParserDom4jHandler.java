@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -14,18 +15,32 @@ import org.dom4j.io.XMLWriter;
 
 public class JmxParserDom4jHandler {
 
-//	public static void main(String[] args) {
-//		new JmxParserDom4jHandler().createJmxPlan("1.xml", "2.xml", "localhost", "8080", "/usr/login", "post",
-//				"usr=root&passwd=123456", "100", "return 0");
-//	}
 	private static StringBuilder stringBuilder = new StringBuilder();
 	public static StringBuilder getStringBuilder() {
 		return stringBuilder;
 	}
 
+	/**
+	 * 
+	 * @param jmxPlanTemple   模板文件完整路径（文件路径 + 文件名称）
+	 * @param jmxPlan         要生成的测试计划完整测试计划（测试计划文件路径 + 测试计划文件名称）
+	 * @param ip              要替换的IP地址
+	 * @param port            要替换的端口
+	 * @param path   	      要替换的接口路径
+	 * @param requestMethod   要替换的接口请求方法 
+	 * @param paramType       参数类型
+	 * @param paramsMap       K-V 参数值
+	 * @param parameters      Body参数值
+	 * @param vuser           并发用户数
+	 * @param assertion       断言内容
+	 * @param duration        持续时间
+	 * @param testFiled       断言范围
+	 * @param testType        断言规则
+	 * 
+	 */
 	@SuppressWarnings("unchecked")
-	public static void createJmxPlan(String jmxPlanTemple, String jmxPlan, String ip, String port, String path, String method,
-			String parameters, String vuser, String assertion,String duration) {
+	public static void createJmxPlan(String jmxPlanTemple, String jmxPlan, String ip, String port, String path, String requestMethod,
+			String paramType,String parameters, Map<String,String> paramsMap,String vuser, String assertion,String duration,String testFiled,String testType ) {
 
 		SAXReader saxReader = null;
 		Document doc = null;
@@ -43,7 +58,7 @@ public class JmxParserDom4jHandler {
 				Element vuserEle = iter.next();
 				if (vuserEle.attribute("name").getValue().equals("ThreadGroup.num_threads")) {
 					vuserEle.setText(vuser);
-					stringBuilder.append("<p>" + "设置 ThreadGroup.num_threads: \"" + vuserEle.getText()  + "\"</p>");
+					stringBuilder.append("<p>" + "设置 并发用户数: \"" + vuserEle.getText()  + "\"</p>");
 
 				}
 			}
@@ -55,12 +70,12 @@ public class JmxParserDom4jHandler {
 				Element durationEle = durationListIter.next();
 				if (durationEle.attribute("name").getValue().equals("ThreadGroup.duration")) {
 					durationEle.setText(duration);
-					stringBuilder.append("<p>" + "设置 ThreadGroup.duration: \"" + durationEle.getText()  + "\"</p>");
+					stringBuilder.append("<p>" + "设置 持续执行时间: \"" + durationEle.getText()  + "\"</p>");
 
 				}
 			}
 
-			// 替换 http Request args 参数"
+			// 替换 请求 参数"
 			List<Element> httpRequestArgsList = doc.selectNodes(
 					"/jmeterTestPlan/hashTree/hashTree/hashTree/HTTPSamplerProxy/elementProp/collectionProp/elementProp/stringProp");
 			Iterator<Element> httpRequestArgsIter = httpRequestArgsList.iterator();
@@ -68,7 +83,7 @@ public class JmxParserDom4jHandler {
 				Element args = httpRequestArgsIter.next();
 				if (args.attribute("name").getValue().equals("Argument.value")) {
 					args.setText(parameters);
-					stringBuilder.append("<p>" + "设置 Argument.value: \"" + args.getText()  + "\"</p>");
+					stringBuilder.append("<p>" + "设置 请求参数\"" + args.getText()  + "\"</p>");
 				}
 			}
 
@@ -82,22 +97,22 @@ public class JmxParserDom4jHandler {
 
 				case "HTTPSampler.domain":
 					httpServer.setText(ip);
-					stringBuilder.append("<p>" + "设置 HTTPSampler.domain: \"" + httpServer.getText()  + "\"</p>");
+					stringBuilder.append("<p>" + "设置 IP地址: \"" + httpServer.getText()  + "\"</p>");
 					break;
 
 				case "HTTPSampler.port":
 					httpServer.setText(port);
-					stringBuilder.append("<p>" + "设置 HTTPSampler.port: \"" + httpServer.getText()  + "\"</p>");
+					stringBuilder.append("<p>" + "设置 请求端口号: \"" + httpServer.getText()  + "\"</p>");
 					break;
 
 				case "HTTPSampler.path":
 					httpServer.setText(path);
-					stringBuilder.append("<p>" + "设置 HTTPSampler.path: \"" + httpServer.getText()  + "\"</p>");
+					stringBuilder.append("<p>" + "设置 接口路径: \"" + httpServer.getText()  + "\"</p>");
 					break;
 
 				case "HTTPSampler.method":
-					httpServer.setText(method);
-					stringBuilder.append("<p>" + "设置 HTTPSampler.method: \"" + httpServer.getText()  + "\"</p>");
+					httpServer.setText(requestMethod);
+					stringBuilder.append("<p>" + "设置 接口请求方法: \"" + httpServer.getText()  + "\"</p>");
 					break;
 
 				default:
@@ -112,7 +127,7 @@ public class JmxParserDom4jHandler {
 			while (httpRequestAssertionIter.hasNext()) {
 				Element assertionEle = httpRequestAssertionIter.next();
 				assertionEle.setText(assertion);
-				stringBuilder.append("<p>" + "设置 Asserion.test_strings: \"" + assertionEle.getText()  + "\"</p>");
+				stringBuilder.append("<p>" + "设置 断言内容: \"" + assertionEle.getText()  + "\"</p>");
 			}
 
 		} catch (DocumentException e) {

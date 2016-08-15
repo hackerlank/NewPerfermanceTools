@@ -120,16 +120,18 @@ public class HttpUtils {
             HttpGet httpGet = new HttpGet(url);
             CloseableHttpResponse response = httpClient.execute(httpGet);
             int statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode != 200) {
-                httpGet.abort();
-                throw new RuntimeException("HttpClient,error status code :" + statusCode);
+            if (statusCode == 200) {
+//                httpGet.abort();
+//                throw new RuntimeException("HttpClient,error status code :" + statusCode);
+            	HttpEntity entity = response.getEntity();
+            	
+            	if (entity != null){
+            		result = EntityUtils.toString(entity, CHARSET);
+            	}
+            	EntityUtils.consume(entity);
+            } else{
+            	result = response.getStatusLine().toString();
             }
-            HttpEntity entity = response.getEntity();
-
-            if (entity != null){
-                result = EntityUtils.toString(entity, CHARSET);
-            }
-            EntityUtils.consume(entity);
             response.close();
             
         } catch (Exception e) {
@@ -151,16 +153,19 @@ public class HttpUtils {
             HttpGet httpGet = new HttpGet(url);
             CloseableHttpResponse response = httpClient.execute(httpGet);
             int statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode != 200) {
-                httpGet.abort();
-                throw new RuntimeException("HttpClient,error status code :" + statusCode);
-            }
+            if (statusCode == 200) {
+//                httpGet.abort();
+//                throw new RuntimeException("HttpClient,error status code :" + statusCode);
+           
             HttpEntity entity = response.getEntity();
 
             if (entity != null){
                 result = EntityUtils.toString(entity, CHARSET);
             }
             EntityUtils.consume(entity);
+            }else{
+            	result = response.getStatusLine().toString();
+            }
             response.close();
            
         } catch (Exception e) {
@@ -211,21 +216,24 @@ public class HttpUtils {
             System.out.println(end_date);
             int statusCode = response.getStatusLine().getStatusCode();
             result.add(statusCode);
-            if (statusCode != 200) {
+            if (statusCode == 200) {
 //                httpPost.abort();
 //                throw new RuntimeException("HttpClient,error status code :" + statusCode);
-            	return result;
-            }
-            
-            System.out.println("请求耗时：" + (end_date.getTime()-start_date.getTime()));
-            
-            HttpEntity entity = response.getEntity();
+            	 System.out.println("请求耗时：" + (end_date.getTime()-start_date.getTime()));
+            	 
+            	 HttpEntity entity = response.getEntity();
+            	 
+            	 if (entity != null){
+            		 result.add(EntityUtils.toString(entity, CHARSET));
+            	 }
+            	 result.add(end_date.getTime()-start_date.getTime());
+            	 EntityUtils.consume(entity);
             	
-            if (entity != null){
-                result.add(EntityUtils.toString(entity, CHARSET));
+            }else{
+            	
+            	result.add(response.getStatusLine().toString());
             }
-            result.add(end_date.getTime()-start_date.getTime());
-            EntityUtils.consume(entity);
+            
             response.close();
             
         } catch (Exception e) {
@@ -261,17 +269,18 @@ public class HttpUtils {
             
             CloseableHttpResponse response = httpClient.execute(httpPost);
             int statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode != 200) {
+            if (statusCode == 200) {
                 //httpPost.abort();
-                return "HttpClient,error status code :" + statusCode;
                 //throw new RuntimeException("HttpClient,error status code :" + statusCode);
+            	HttpEntity entity = response.getEntity();
+            	
+            	if (entity != null){
+            		result = EntityUtils.toString(entity, CHARSET);
+            	}
+            	EntityUtils.consume(entity);
+            }else{
+            	result = response.getStatusLine().toString();
             }
-            HttpEntity entity = response.getEntity();
-
-            if (entity != null){
-                result = EntityUtils.toString(entity, CHARSET);
-            }
-            EntityUtils.consume(entity);
             response.close();
 
         } catch (Exception e) {
@@ -308,16 +317,18 @@ public class HttpUtils {
 
             CloseableHttpResponse response = httpClient.execute(httpPost);
             int statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode != 200) {
-                httpPost.abort();
-                throw new RuntimeException("HttpClient,error status code :" + statusCode);
+            if (statusCode == 200) {
+//                httpPost.abort();
+//                throw new RuntimeException("HttpClient,error status code :" + statusCode);
+            	HttpEntity entity = response.getEntity();
+            	
+            	if (entity != null){
+            		result = EntityUtils.toString(entity, CHARSET);
+            	}
+            	EntityUtils.consume(entity);
+            } else {
+            	result = response.getStatusLine().toString();
             }
-            HttpEntity entity = response.getEntity();
-
-            if (entity != null){
-                result = EntityUtils.toString(entity, CHARSET);
-            }
-            EntityUtils.consume(entity);
             response.close();
 
         } catch (Exception e) {

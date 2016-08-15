@@ -121,7 +121,7 @@
 
 										<tr>
 											<td>Method:</td>
-											<td><select id="requestmethod" name="requestmethod" style="width: 100px">
+											<td><select id="requestmethod" name="requestMethod" style="width: 100px">
 													<option value="get">GET</option>
 													<option value="post" selected="selected">POST</option>
 											</select></td>
@@ -214,7 +214,6 @@
 								<br />
 								<button type="submit" class="btn" onclick="testAPI()">测试接口</button>
 
-								<button type="button" onclick="testActive(1)">显示Param名称</button>
 								<br />
 							</div>
 							<div class="tab-pane" id="panel-653429">
@@ -247,21 +246,21 @@
 								<fieldset>
 									<legend>响应断言</legend>
 									<h4>要测试的响应字段</h4>
-									<input type="radio" name="test_field" value="1" checked="checked"/> 响应文本 
-									<input type="radio" name="test_field" value="2"/> Document(text) 
-									<input type="radio" name="test_field" value="3"/> URL样本 
-									<input type="radio" name="test_field" value="4"/> 响应代码 
-									<input type="radio" name="test_field" value="5"/> 响应信息
-									<input type="radio" name="test_field" value="6"/> Response Headers <br>
+									<input type="radio" name="testFiled" value="1" checked="checked"/> 响应文本 
+									<input type="radio" name="testFiled" value="2"/> Document(text) 
+									<input type="radio" name="testFiled" value="3"/> URL样本 
+									<input type="radio" name="testFiled" value="4"/> 响应代码 
+									<input type="radio" name="testFiled" value="5"/> 响应信息
+									<input type="radio" name="testFiled" value="6"/> Response Headers <br>
 									<!-- <input type="checkbox" name="assume_success"/ value="1"> Ignore Status  -->
 									
 									<h4>模式匹配规则</h4>
-									<input type="radio" name="test_type" value="2" checked="checked"/> 包括 
-									<input type="radio" name="test_type" value="1"/> 匹配
-									<input type="radio" name="test_type" value="8"/> Equals
-									<input type="radio" name="test_type" value="16"/> SubString 
+									<input type="radio" name="testType" value="2" checked="checked"/> 包括 
+									<input type="radio" name="testType" value="1"/> 匹配
+									<input type="radio" name="testType" value="8"/> Equals
+									<input type="radio" name="testType" value="16"/> SubString 
 									
-									<!-- <input type="checkbox" name="test_type"/ value="20"> 否  -->
+									<!-- <input type="checkbox" name="testType"/ value="20"> 否  -->
 									<h4>断言内容</h4>
 									<textarea class="textdefine" name="assertion"></textarea>
 								
@@ -271,12 +270,12 @@
 									<legend>保存测试计划</legend>
 									<table>
 										<tr>
-											<td>测试计划名称：<input type="text" name="testplanname"
+											<td>测试计划名称：<input type="text" name="testPlanName"
 												size="30" value="" /></td>
 										</tr>
 
 										<tr>
-											<td>测试计划描述：<input type="text" name="testplandesc"
+											<td>测试计划描述：<input type="text" name="testPlanDesc"
 												size="30" value="" /></td>
 										</tr>
 
