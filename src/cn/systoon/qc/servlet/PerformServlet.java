@@ -207,18 +207,24 @@ public class PerformServlet extends HttpServlet {
 			jmxPlanName = testPlanName + "_" + vuser + "Vuser" + "_" + System.currentTimeMillis() + ".jmx";
 		}
 		jmxPlan = jmxPlanPath + jmxPlanName;
-		System.out.println();
-		System.out.println("jmxPlan" + jmxPlan);
-		System.out.println("path" + path);
+
 		// 测试接口
 		// test(request, response);
 		System.out.println("*************");
 		getParametersMap(request, response);
 
-		JmxParserDom4jHandler.createJmxPlan(jmxPlanTemple, jmxPlan, ip, port, path, requestMethod, paramType,
+		JmxParserDom4jHandler.createJmxPlan(jmxPlanTemple, jmxPlan, ip, port, path, requestMethod, paramTypeInt,
 				parameters, paramsMap, vuser, assertion, duration, testFiled, testType);
 		response.setCharacterEncoding("UTF-8");
 		response.getWriter().print(JmxParserDom4jHandler.getStringBuilder().toString());
+		
+		/*
+		 * 1、执行数据库程序，保持测试计划路径，名称，apiID等 到指定 的数据表中
+		 * 
+		 * 2、将测试计划保持到 apache服务器中，支持点击下载
+		 * 
+		 * 
+		 */
 
 	}
 

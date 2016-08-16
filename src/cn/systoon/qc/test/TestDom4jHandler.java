@@ -17,8 +17,11 @@ public class TestDom4jHandler {
 		String port = "8081"; // 端口号
 		String path = "/service/path"; // 接口请求路径 获取前端参数名为 “pathText”的参数值
 		String requestMethod = "get"; // 请求方法（Get or Post）
-		String paramType = "1"; // 参数类型，1为K-V方式， 2为 Body方式
+		Integer paramType = 1; // 参数类型，1为K-V方式， 2为 Body方式
 		Map<String, String> paramsMap = new HashMap<String, String>(); // K-V方式
+		paramsMap.put("id", "1");
+		paramsMap.put("sign", "skwjhsd");
+		paramsMap.put("token", "897329587jksdhf");
 		String parameters = "body=KKKKKKKKKKKKKKKKK"; // Body方式 时，参数值
 		String vuser = "20"; // 并发用户数
 		String duration = "500"; // 执行测试时间
