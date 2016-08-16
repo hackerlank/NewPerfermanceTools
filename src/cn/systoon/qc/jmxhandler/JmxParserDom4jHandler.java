@@ -87,6 +87,12 @@ public class JmxParserDom4jHandler {
 				}
 			}
 
+			/**
+			 * 需通过paramType判断参数类型，配置不同的参数方式，KV or BodyType方式
+			 * ？？？？
+			 * 
+			 * 
+			 */
 			// 替换 http server 参数
 			List<Element> httpServerList = doc
 					.selectNodes("/jmeterTestPlan/hashTree/hashTree/hashTree/HTTPSamplerProxy/stringProp");
@@ -111,7 +117,7 @@ public class JmxParserDom4jHandler {
 					break;
 
 				case "HTTPSampler.method":
-					httpServer.setText(requestMethod);
+					httpServer.setText(requestMethod.toUpperCase());
 					stringBuilder.append("<p>" + "设置 接口请求方法: \"" + httpServer.getText()  + "\"</p>");
 					break;
 
@@ -120,7 +126,9 @@ public class JmxParserDom4jHandler {
 				}
 			}
 
-			// 替换 http Request Assertion 参数"
+			
+	
+			// 替换 断言内容"
 			List<Element> httpRequestAssertionList = doc.selectNodes(
 					"/jmeterTestPlan/hashTree/hashTree/hashTree/ResponseAssertion/collectionProp/stringProp");
 			Iterator<Element> httpRequestAssertionIter = httpRequestAssertionList.iterator();
@@ -129,6 +137,28 @@ public class JmxParserDom4jHandler {
 				assertionEle.setText(assertion);
 				stringBuilder.append("<p>" + "设置 断言内容: \"" + assertionEle.getText()  + "\"</p>");
 			}
+			
+			// 替换 断言范围  testFiled 参数"
+			List<Element> httpRequestAssertionTestFiledList = doc.selectNodes(
+					"/jmeterTestPlan/hashTree/hashTree/hashTree/ResponseAssertion/stringProp");
+			Iterator<Element> httpRequestAssertionTestFiledIter = httpRequestAssertionTestFiledList.iterator();
+			while (httpRequestAssertionTestFiledIter.hasNext()) {
+				Element assertionEle = httpRequestAssertionTestFiledIter.next();
+				assertionEle.setText(testFiled);
+				stringBuilder.append("<p>" + "设置 断言范围: \"" + assertionEle.getText()  + "\"</p>");
+			}
+			
+			// 替换 断言规则"
+			List<Element> httpRequestAssertionTestTypeList = doc.selectNodes(
+					"/jmeterTestPlan/hashTree/hashTree/hashTree/ResponseAssertion/intProp");
+			Iterator<Element> httpRequestAssertionTestTypeIter = httpRequestAssertionTestTypeList.iterator();
+			while (httpRequestAssertionTestTypeIter.hasNext()) {
+				Element assertionEle = httpRequestAssertionTestTypeIter.next();
+				assertionEle.setText(testType);
+				stringBuilder.append("<p>" + "设置 断言规则: \"" + assertionEle.getText()  + "\"</p>");
+			}
+			
+			
 
 		} catch (DocumentException e) {
 			e.printStackTrace();

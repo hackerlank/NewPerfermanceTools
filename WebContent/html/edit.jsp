@@ -246,12 +246,12 @@
 								<fieldset>
 									<legend>响应断言</legend>
 									<h4>要测试的响应字段</h4>
-									<input type="radio" name="testFiled" value="1" checked="checked"/> 响应文本 
-									<input type="radio" name="testFiled" value="2"/> Document(text) 
-									<input type="radio" name="testFiled" value="3"/> URL样本 
-									<input type="radio" name="testFiled" value="4"/> 响应代码 
-									<input type="radio" name="testFiled" value="5"/> 响应信息
-									<input type="radio" name="testFiled" value="6"/> Response Headers <br>
+									<input type="radio" name="testFiled" value="Assertion.response_data" checked="checked"/> 响应文本 
+									<input type="radio" name="testFiled" value="Assertion.response_data_as_document"/> Document(text) 
+									<input type="radio" name="testFiled" value="Assertion.sample_label"/> URL样本 
+									<input type="radio" name="testFiled" value="Assertion.response_code"/> 响应代码 
+									<input type="radio" name="testFiled" value="Assertion.response_message"/> 响应信息
+									<input type="radio" name="testFiled" value="Assertion.response_headers"/> Response Headers <br>
 									<!-- <input type="checkbox" name="assume_success"/ value="1"> Ignore Status  -->
 									
 									<h4>模式匹配规则</h4>

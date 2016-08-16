@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 参数类型 K-V -->
+<elementProp name="HTTPsampler.Arguments" elementType="Arguments"
+	guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables"
+	enabled="true">
+	<collectionProp name="Arguments.arguments">
+		<elementProp name="id" elementType="HTTPArgument">
+			<boolProp name="HTTPArgument.always_encode">false</boolProp>
+			<stringProp name="Argument.value">1</stringProp>
+			<stringProp name="Argument.metadata">=</stringProp>
+			<boolProp name="HTTPArgument.use_equals">true</boolProp>
+			<stringProp name="Argument.name">id</stringProp>
+		</elementProp>
+		<elementProp name="group" elementType="HTTPArgument">
+			<boolProp name="HTTPArgument.always_encode">false</boolProp>
+			<stringProp name="Argument.value">1</stringProp>
+			<stringProp name="Argument.metadata">=</stringProp>
+			<boolProp name="HTTPArgument.use_equals">true</boolProp>
+			<stringProp name="Argument.name">group</stringProp>
+		</elementProp>
+	</collectionProp>
+	
+	<!-- 参数类型 BodyType -->
+	<collectionProp name="Arguments.arguments">
+		<elementProp name="" elementType="HTTPArgument">
+			<boolProp name="HTTPArgument.always_encode">false</boolProp>
+			<stringProp name="Argument.value">{&quot;sign&quot;:&quot;363b55c6fe4604377c0f64a112489411&quot;,&quot;t&quot;:&quot;1456371556&quot;,&quot;data&quot;:{&quot;sf&quot;:
+				&quot;2b9fc9ac4d8d12ce014d8dad55a30ad1&quot;,&quot;dn&quot;:&quot;ac4d8d12ce014d8&quot;,&quot;ui&quot;:&quot;22&quot;,&quot;ci&quot;:&quot;34&quot;,&quot;ft&quot;:&quot;2&quot;,&quot;fi&quot;:&quot;004&quot;,&quot;bc&quot;:&quot;1&quot;,&quot;bd&quot;:&quot;1&quot;,&quot;dv&quot;:&quot;3&quot;},&quot;appKey&quot;:&quot;1c9fc9ac4d8dacce014d8dad55a30103&quot;}
+			</stringProp>
+			<stringProp name="Argument.metadata">=</stringProp>
+		</elementProp>
+	</collectionProp>
+	
+</elementProp>
+
+           

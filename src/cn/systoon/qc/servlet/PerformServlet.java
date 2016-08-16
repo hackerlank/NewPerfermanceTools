@@ -108,6 +108,7 @@ public class PerformServlet extends HttpServlet {
 		path = request.getParameter("pathText");
 		requestMethod = request.getParameter("requestMethod");
 		paramType = request.getParameter("paramType");
+		parameters = request.getParameter("parameters");
 		url = "http://" + ip + ":" + port + path;
 
 		vuser = request.getParameter("vuser");
@@ -122,9 +123,13 @@ public class PerformServlet extends HttpServlet {
 		jmxPlanTemple = this.getServletContext().getInitParameter("jmxPlanTemple");
 
 		methodName = request.getParameter("method");
+		
+		if(paramType != null){
+			paramTypeInt = Integer.parseInt(paramType);
+		}
 
 		// 获取K-V方式参数值
-		if ((paramTypeInt = Integer.parseInt(paramType)) == 1) {
+		if (paramTypeInt == 1) {
 			paramCount = request.getParameter("paramCount");
 			System.out.println(paramCount);
 
@@ -135,7 +140,6 @@ public class PerformServlet extends HttpServlet {
 				if (StringUtils.isNotEmpty(paramName) && StringUtils.isNotEmpty(paramValue)) {
 					paramsMap.put(paramName, paramValue);
 				}
-
 			}
 		}
 
@@ -181,7 +185,6 @@ public class PerformServlet extends HttpServlet {
 				if (!paramsMap.isEmpty()) {
 					resultList = HttpUtils.doPostFormReq(url, postHeader, paramsMap, "utf-8");
 				}
-				parameters = paramsMap.toString();
 				result = resultList.toString();
 			} else if (paramTypeInt == 2) {
 
@@ -204,12 +207,15 @@ public class PerformServlet extends HttpServlet {
 			jmxPlanName = testPlanName + "_" + vuser + "Vuser" + "_" + System.currentTimeMillis() + ".jmx";
 		}
 		jmxPlan = jmxPlanPath + jmxPlanName;
-
-		System.out.println(jmxPlan);
+		System.out.println();
+		System.out.println("jmxPlan" + jmxPlan);
+		System.out.println("path" + path);
 		// 测试接口
 		// test(request, response);
+		System.out.println("*************");
+		getParametersMap(request, response);
 
-		JmxParserDom4jHandler.createJmxPlan(jmxPlanTemple, jmxPlan, ip, port, jmxExcutePath, requestMethod, paramType,
+		JmxParserDom4jHandler.createJmxPlan(jmxPlanTemple, jmxPlan, ip, port, path, requestMethod, paramType,
 				parameters, paramsMap, vuser, assertion, duration, testFiled, testType);
 		response.setCharacterEncoding("UTF-8");
 		response.getWriter().print(JmxParserDom4jHandler.getStringBuilder().toString());
@@ -266,7 +272,7 @@ public class PerformServlet extends HttpServlet {
 			throws ServletException, IOException {
 		System.out.println("getParametersByApiId");
 		String id = request.getParameter("id");
-		Integer apiId = Integer.valueOf(id).intValue();
+		Integer apiId = Integer.parseInt(id);
 		System.out.println(apiId);
 		ParametersDAOImpl parametersDAOImpl = new ParametersDAOImpl();
 		List<Parameters> parametersList = parametersDAOImpl.getListWithApiId(apiId);
