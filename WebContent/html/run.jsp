@@ -42,7 +42,7 @@
 								<table >
 									<tr>
 										<td>Project Name:</td>
-										<td><select id="project" name="project">
+										<td><select id="project" name="project" style="width: 250px">
 												<option value="0" selected="selected">请选择项目名称</option>
 												<%
 													if (serviceLists != null && serviceLists.size() > 0) {
@@ -63,11 +63,16 @@
 										<td><select id="path" name="path" style="width: 250px">
 												<option value="">请选择接口地址</option>
 										</select></td>
-							
+										
+									</tr>
+									<tr>
 										<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Test Plan:</td>
 										<td><select id="plan" name="plan" style="width: 250px">
 												<option value="">请选择测试计划</option>
 										</select></td>
+										
+										<td id="desc" style="color: red"></td>
+									
 									</tr>
 								</table>
 							</fieldset>

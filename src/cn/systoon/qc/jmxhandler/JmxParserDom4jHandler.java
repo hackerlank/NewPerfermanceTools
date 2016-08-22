@@ -220,8 +220,8 @@ public class JmxParserDom4jHandler {
 			XMLWriter xmlWriter = new XMLWriter(fileWriter, format);
 			xmlWriter.write(doc);
 			stringBuilder.append("<p>" + "jmxplan 计划文件已生成完毕。" + "</p>");
-			stringBuilder.append("<p>" + "文件地址： " + "<a href=\"" + new File(jmxPlan).getAbsolutePath() + "\">"
-					+ new File(jmxPlan).getAbsolutePath() + "</p>");
+//			stringBuilder.append("<p>" + "文件地址： " + "<a href=\"" + new File(jmxPlan).getAbsolutePath() + "\">"
+//					+ new File(jmxPlan).getAbsolutePath() + "</p>");
 			xmlWriter.close();
 			fileWriter.close();
 

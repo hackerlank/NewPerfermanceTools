@@ -19,6 +19,7 @@ public class DAO <T>{
 	private QueryRunner queryRunner = new QueryRunner();
 	private Class<T> clazz;
 	
+	@SuppressWarnings("unchecked")
 	public DAO(){
 		clazz = ReflectionUtils.getSuperClassGenricType(getClass(), 0);
 	}
@@ -32,6 +33,7 @@ public class DAO <T>{
 	 * @param args
 	 * @return
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public <E> E getForValue(String sql,Object ...args ){
 		Connection connection = null;
 		

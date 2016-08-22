@@ -1,5 +1,12 @@
 package cn.systoon.qc.domain;
 
+
+/**
+ * Parameters 表
+ * 保存Key-Value格式参数名称，和参数【初始值】
+ * @author perfermance
+ *
+ */
 public class Parameters {
 	private Integer id;
 	private Integer apiId;

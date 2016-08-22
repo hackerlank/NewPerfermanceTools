@@ -2,13 +2,11 @@ package cn.systoon.qc.servlet;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Enumeration;
+import java.sql.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -18,21 +16,22 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.tomcat.dbcp.pool.impl.GenericKeyedObjectPool.Config;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import cn.systoon.qc.dao.impl.ApiInfoDAOImpl;
 import cn.systoon.qc.dao.impl.ParametersDAOImpl;
 import cn.systoon.qc.dao.impl.ServiceListDAOImpl;
+import cn.systoon.qc.dao.impl.TestPlanDAOImpl;
 import cn.systoon.qc.domain.ApiInfo;
 import cn.systoon.qc.domain.Parameters;
 import cn.systoon.qc.domain.ServiceList;
+import cn.systoon.qc.domain.TestPlan;
 import cn.systoon.qc.jmxhandler.JmxParserDom4jHandler;
 import cn.systoon.qc.utils.HttpUtils;
 
 /**
- * 通过反射，实现PerfermanceServlet 最为路由，只做转发 根据不同的method参数执行不同的处理方法 loadOnStartup = 1
+ * 通过反射，实现PerfermanceServlet 最为路由，
+ * 只做【路由】转发 根据不同的method参数执行不同的处理方法 loadOnStartup = 1
  * tomcat启动时执行（主要是为了执行init方法，返回整个WEB项目对象serviceList对象）
  */
 @WebServlet(urlPatterns = { "/performServlet" }, loadOnStartup = 1)
@@ -44,13 +43,15 @@ public class PerformServlet extends HttpServlet {
 	String ip = ""; // IP地址
 	String port = ""; // 端口号
 	String path = ""; // 接口请求路径 获取前端参数名为 “pathText”的参数值
+	String apiIdStr = ""; // 请求接口的apiId在 apiInfo表中的主键
+	Integer apiId = -1;   //转出Integer类型
 	String requestMethod = ""; // 请求方法（Get or Post）
 	String paramType = ""; // 参数类型，1为K-V方式， 2为 Body方式
 	Integer paramTypeInt = -1; // paramType 转Integer类型
 	String paramCount = ""; // K-V方式 时，参数个数
-	Map<String, String> paramsMap = new HashMap<String, String>(); // K-V方式
-																	// 时，参数值
-	String parameters = ""; // Body方式 时，参数值
+	Map<String, String> paramsMap = new HashMap<String, String>(); // K-V方式时，参数值
+	String paramsBody = "";                                        // Body方式 时，参数值
+	String parameters = "";  									   // 存储到testplan表中时的参数值
 	String url = ""; // 请求的URI
 	// 保存测试计划需要的相关参数
 	String vuser = ""; // 并发用户数
@@ -62,6 +63,8 @@ public class PerformServlet extends HttpServlet {
 	String testPlanDesc = ""; // 测试计划描述
 	// 设置执行测试个共用参数，从web.xml中读取
 	String jmxPlanTemple = ""; // 测试计划模板（完整路径+名称）
+	String jmxPlanTypeStr = "";  // 测试计划类型（1、为单接口，2、为聚合场景计划）
+	Integer jmxPlanType = -1;    // 测试计划类型转为Integer类型
 	String jmxPlanPath = ""; // 测试计划保存路径（根目录）
 	String jmxPlanName = ""; // 测试计划名称，添加_Vuser_CurrentTime
 	String jmxPlan = ""; // 可执行的测试计划，jmxPlanPath + jmxPlanName
@@ -99,49 +102,14 @@ public class PerformServlet extends HttpServlet {
 		doPost(request, response);
 	}
 
+	/**
+	 * 通过反射，实现【路由】主方法，进行跳转
+	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
-		// 获取请求参数
-		ip = request.getParameter("ip");
-		port = request.getParameter("port");
-		path = request.getParameter("pathText");
-		requestMethod = request.getParameter("requestMethod");
-		paramType = request.getParameter("paramType");
-		parameters = request.getParameter("parameters");
-		url = "http://" + ip + ":" + port + path;
-
-		vuser = request.getParameter("vuser");
-		duration = request.getParameter("duration");
-		testFiled = request.getParameter("testFiled");
-		testType = request.getParameter("testType");
-		assertion = request.getParameter("assertion");
-		testPlanName = request.getParameter("testPlanName");
-		testPlanDesc = request.getParameter("testPlanDesc");
-
-		jmxPlanPath = this.getServletContext().getInitParameter("jmxPlanPath");
-		jmxPlanTemple = this.getServletContext().getInitParameter("jmxPlanTemple");
 
 		methodName = request.getParameter("method");
-		
-		if(paramType != null){
-			paramTypeInt = Integer.parseInt(paramType);
-		}
-
-		// 获取K-V方式参数值
-		if (paramTypeInt == 1) {
-			paramCount = request.getParameter("paramCount");
-			System.out.println(paramCount);
-
-			int count = Integer.parseInt(paramCount);
-			for (int i = 0; i < count; i++) {
-				String paramName = request.getParameter("paramName" + i);
-				String paramValue = request.getParameter("paramValue" + i);
-				if (StringUtils.isNotEmpty(paramName) && StringUtils.isNotEmpty(paramValue)) {
-					paramsMap.put(paramName, paramValue);
-				}
-			}
-		}
 
 		try {
 			Method method = getClass().getDeclaredMethod(methodName, HttpServletRequest.class,
@@ -153,7 +121,38 @@ public class PerformServlet extends HttpServlet {
 	}
 
 	protected void test(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+		// 获取请求参数
+		ip = request.getParameter("ip");
+		port = request.getParameter("port");
+		path = request.getParameter("pathText");
+		
+		requestMethod = request.getParameter("requestMethod");
+		paramType = request.getParameter("paramType");
+		paramsBody = request.getParameter("parameters");
+		url = "http://" + ip + ":" + port + path;
+		if(paramType != null){
+			paramTypeInt = Integer.parseInt(paramType);
+		}
+		
+		// 获取K-V方式参数值
+		if (paramTypeInt == 1) {
+			paramCount = request.getParameter("paramCount");
+			System.out.println(paramCount);
+			
+			int count = Integer.parseInt(paramCount);
+			for (int i = 0; i < count; i++) {
+				String paramName = request.getParameter("paramName" + i);
+				String paramValue = request.getParameter("paramValue" + i);
+				if (StringUtils.isNotEmpty(paramName) && StringUtils.isNotEmpty(paramValue)) {
+					paramsMap.put(paramName, paramValue);
+				}
+			}
+			//将K-V格式参数转为JSON格式传给parameters
+			parameters = new ObjectMapper().writeValueAsString(paramsMap);
+		}else if(paramTypeInt == 2){
+			parameters = paramsBody;
+		}
+		
 		/**
 		 * 处理ApiInfo表中的数据
 		 */
@@ -188,7 +187,7 @@ public class PerformServlet extends HttpServlet {
 				result = resultList.toString();
 			} else if (paramTypeInt == 2) {
 
-				result = HttpUtils.doPostStringReq(url, postHeader, parameters, "utf-8");
+				result = HttpUtils.doPostStringReq(url, postHeader, paramsBody, "utf-8");
 			}
 		}
 
@@ -199,14 +198,67 @@ public class PerformServlet extends HttpServlet {
 	}
 
 	protected void save(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// 获取请求参数
+		ip = request.getParameter("ip");
+		port = request.getParameter("port");
+		path = request.getParameter("pathText");
+		apiIdStr = request.getParameter("path");
+		apiId = Integer.parseInt(apiIdStr);
+		
+		requestMethod = request.getParameter("requestMethod");
+		paramType = request.getParameter("paramType");
+		paramsBody = request.getParameter("parameters");
+		url = "http://" + ip + ":" + port + path;
+		if(paramType != null){
+			paramTypeInt = Integer.parseInt(paramType);
+		}
+		
+		// 获取K-V方式参数值
+		if (paramTypeInt == 1) {
+			paramCount = request.getParameter("paramCount");
+			System.out.println(paramCount);
+			
+			int count = Integer.parseInt(paramCount);
+			for (int i = 0; i < count; i++) {
+				String paramName = request.getParameter("paramName" + i);
+				String paramValue = request.getParameter("paramValue" + i);
+				if (StringUtils.isNotEmpty(paramName) && StringUtils.isNotEmpty(paramValue)) {
+					paramsMap.put(paramName, paramValue);
+				}
+			}
+			//将K-V格式参数转为JSON格式传给parameters
+			parameters = new ObjectMapper().writeValueAsString(paramsMap);
+		}else if(paramTypeInt == 2){
+			parameters = paramsBody;
+		}
 
+		//获取性能属性
+		vuser = request.getParameter("vuser");
+		duration = request.getParameter("duration");
+		testFiled = request.getParameter("testFiled");
+		testType = request.getParameter("testType");
+		assertion = request.getParameter("assertion");
+		testPlanName = request.getParameter("testPlanName");
+		testPlanDesc = request.getParameter("testPlanDesc");
+
+		jmxPlanTypeStr = request.getParameter("jmxPlanType");
+		jmxPlanType = Integer.parseInt(jmxPlanTypeStr);
+		jmxPlanPath = this.getServletContext().getInitParameter("jmxPlanPath");
+		jmxPlanTemple = this.getServletContext().getInitParameter("jmxPlanTemple");
+
+		
+		long time = System.currentTimeMillis();
+		
 		if (StringUtils.isBlank(testPlanName)) {
 			jmxPlanName = path.substring(1, path.length()).replace('/', '_') + "_" + vuser + "Vuser" + "_"
 					+ System.currentTimeMillis() + ".jmx";
 		} else {
-			jmxPlanName = testPlanName + "_" + vuser + "Vuser" + "_" + System.currentTimeMillis() + ".jmx";
+			jmxPlanName = testPlanName + "_" + vuser + "Vuser" + "_" + time + ".jmx";
 		}
 		jmxPlan = jmxPlanPath + jmxPlanName;
+		
+		Date createTime = new Date(time);
+		System.out.println(createTime);
 
 		// 测试接口
 		// test(request, response);
@@ -214,20 +266,30 @@ public class PerformServlet extends HttpServlet {
 		getParametersMap(request, response);
 
 		JmxParserDom4jHandler.createJmxPlan(jmxPlanTemple, jmxPlan, ip, port, path, requestMethod, paramTypeInt,
-				parameters, paramsMap, vuser, assertion, duration, testFiled, testType);
+				paramsBody, paramsMap, vuser, assertion, duration, testFiled, testType);
 		response.setCharacterEncoding("UTF-8");
 		response.getWriter().print(JmxParserDom4jHandler.getStringBuilder().toString());
 		
-		/*
-		 * 1、执行数据库程序，保持测试计划路径，名称，apiID等 到指定 的数据表中
-		 * 
-		 * 2、将测试计划保持到 apache服务器中，支持点击下载
-		 * 
-		 * 
-		 */
+		//1、将测试计划保持到 apache服务器中，支持点击下载
+		response.getWriter().print("<p>" + "文件地址： " + "<a href=\"http://localhost/script/" + jmxPlanName +  "\" target=\"_blank\"  download=\"help\"  >" + jmxPlanName + "</a></p>");
+		
+		
+		
+		//2、保存数据到数据库中
+		TestPlan testPlan = new TestPlan(jmxPlanName, testPlanDesc, apiId, jmxPlanType, paramTypeInt,parameters, jmxPlan, createTime);
+		new TestPlanDAOImpl().save(testPlan);
+		
+		log.info("save testPlan " + testPlan.toString());
 
 	}
 
+	/**
+	 * 通过ID，查看serviceList表中的对应IP地址
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException
+	 */
 	protected void getServiceIp(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		System.out.println("getServiceIp");
@@ -235,6 +297,7 @@ public class PerformServlet extends HttpServlet {
 		ServiceListDAOImpl serviceListDAOImpl = new ServiceListDAOImpl();
 		ServiceList servicelist = serviceListDAOImpl.getServiceById(id);
 
+		//将对象转为Json串
 		ObjectMapper mapper = new ObjectMapper();
 		String result = mapper.writeValueAsString(servicelist);
 		log.info("********getServiceIp***********" + result);
@@ -243,6 +306,13 @@ public class PerformServlet extends HttpServlet {
 
 	}
 
+	/**
+	 * 通过WarnameId 查看 ApiInfo表中的 warNameId对应的 接口Path列表
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException
+	 */
 	protected void getListApiPath(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		System.out.println("getListApiPath");
@@ -258,6 +328,16 @@ public class PerformServlet extends HttpServlet {
 		response.getWriter().println(result);
 	}
 
+	/**
+	 * 通过ApiInfo表中的ID，获取该条ApiInfo对应的所有值，
+	 * 其中主要是获取ParamType和ParamId，
+	 * 如果ParamType 为K-V模式
+	 * 通过ParamId查找Parameters表中对应该ApiId的所有参数
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException
+	 */
 	protected void getApiInfoById(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		System.out.println("getApiInfoById");
@@ -273,7 +353,15 @@ public class PerformServlet extends HttpServlet {
 		response.setCharacterEncoding("UTF-8");
 		response.getWriter().println(result);
 	}
+	
 
+	/**
+	 * 通过ParamId查找所有K-V格式的所有参数列表
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException
+	 */
 	protected void getParametersByApiId(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		System.out.println("getParametersByApiId");
@@ -291,6 +379,58 @@ public class PerformServlet extends HttpServlet {
 		response.getWriter().println(result);
 	}
 
+	/**
+	 * 获取testPlan表中的测试计划，以apiId查询
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	protected void getListApiPlan(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		System.out.println("getListApiPlan 通过 apiId 获取所有TestPlanList");
+		String id = request.getParameter("id");
+		System.out.println(id);
+		TestPlanDAOImpl testPlanDAOImpl = new TestPlanDAOImpl();
+		List<TestPlan> testPlanList = testPlanDAOImpl.getListWithApiId(id);
+		System.out.println(testPlanList);
+		
+		ObjectMapper mapper = new ObjectMapper();
+		String result = mapper.writeValueAsString(testPlanList);
+		log.info("********getListApiPath***********" + result);
+		response.setCharacterEncoding("UTF-8");
+		response.getWriter().println(result);
+	}
+	
+	/**
+	 * testPlan表中通过Id，获取描述信息
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	protected void getDescWithPlanId(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		System.out.println("getDescWithPlanId testPlan表中通过Id，获取描述信息");
+		String id = request.getParameter("id");
+		System.out.println(id);
+		TestPlanDAOImpl testPlanDAOImpl = new TestPlanDAOImpl();
+		TestPlan testPlan = testPlanDAOImpl.getDescWithPlanId(id);
+		System.out.println(testPlan);
+		
+		ObjectMapper mapper = new ObjectMapper();
+		String result = mapper.writeValueAsString(testPlan);
+		log.info("********getListApiPath***********" + result);
+		response.setCharacterEncoding("UTF-8");
+		response.getWriter().println(result);
+	}
+	
+	/**
+	 * 获取request请求的所有请求参数和参数值
+	 * 已map方式保存，K-V格式保存
+	 * @param request
+	 * @param response
+	 */
 	protected void getParametersMap(HttpServletRequest request, HttpServletResponse response) {
 		/**
 		 * 获取所有参数

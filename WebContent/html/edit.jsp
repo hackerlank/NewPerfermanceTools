@@ -293,6 +293,7 @@
 									<input type="hidden" value="1" name="paramType" id="paramType" /> 
 									<input type="hidden" value="0" name="paramCount" id="paramCount" />
 									<input type="hidden" value="0" name="headerCount" id="headerCount" />
+									<input type="hidden" value="1" name="jmxPlanType" id="jmxPlanType" />
 								</div>
 							</div>
 						</div>

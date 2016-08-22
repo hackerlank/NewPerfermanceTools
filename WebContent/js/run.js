@@ -42,24 +42,57 @@ function changeToAddPlan() {
 	
 	//清空plan
 	$("#plan option:not(:first)").remove();
-
+	//清空desc
+	$("#desc").empty();   //只清空内容
+	
 	//获取Path路径
 	if (pathId != null) {
-		var url = "../performServlet?method=getListApiPLA";
-		var args = {"id" : serviceId};
+		var url = "../performServlet?method=getListApiPlan";
+		var args = {"id" : pathId};
 		$.getJSON(url, args, function (data) {
 			
 			if (data.length == 0) {
 				alert("请配置接口路径");
 			} else {
 				for(var i=0;i<data.length;i++){
-					var apiId = data[i].id;
-					var apiName = data[i].path;
-					$("#path").append("<option value='"+apiId+"'>"+apiName+"</option>");
+					var planId = data[i].id;
+					var planName = data[i].testPlanName;
+					var planDesc = data[i].descript;
+					$("#plan").append("<option value='"+planId+"'>"+planName+"</option>");
 				}
 				
 			}
 		});
+	}
+}
+
+/**
+ * 切换testPlan(测试计划)名称时，自动填入描述信息
+ */
+function changeToAddDesc() {
+//	var serviceId = $(this).val();
+	
+	var planId = $("#plan option:selected").val();
+	
+	//清空desc
+	$("#desc").empty();   //只清空内容
+//	$("#desc").remove();  //移除节点
+	//获取Path路径
+	if (planId != null) {
+		var url = "../performServlet?method=getDescWithPlanId";
+		var args = {"id" : planId};
+		$.getJSON(url, args, function (data) {
+			
+			if (data.length == 0) {
+			} else {
+					var planDesc = data.descript;
+					$("#desc").append("<option>"+ "&nbsp;&nbsp;&nbsp;&nbsp;" + planDesc+"</option>");
+					//	$("#desc").html("&nbsp;&nbsp;"+planDesc);                //可以
+					//	$("#desc").val("&nbsp;&nbsp;"+planDesc);  //不可以
+				}
+				
+			}
+		);
 	}
 }
 
@@ -76,6 +109,10 @@ $(function() {
 		
 	$("#path").change(function(){
 		changeToAddPlan();
+	});
+	
+	$("#plan").change(function(){
+		changeToAddDesc();
 	});
 	
 })
