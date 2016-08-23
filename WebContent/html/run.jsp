@@ -34,7 +34,7 @@
 		<div class="row-fluid">
 			<div class="span12">
 				<form id="form" name="form1" action="" method="get"
-					onsubmit="retur runTest()">
+					onsubmit="return runTest()">
 					<div class="tab-content">
 						<div class="tab-pane active" id="panel-978253">
 							<fieldset>

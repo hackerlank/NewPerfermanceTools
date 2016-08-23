@@ -32,5 +32,10 @@ public class TestPlanDAOImpl extends DAO<TestPlan> implements TestPlanDAO {
 		String sql = "SELECT descript from testplan where id = ?";
 		return get(sql, id);
 	}
+	
+	public TestPlan getJmxPlanWithPlanId(String id) {
+		String sql = "SELECT testplan_name testPlanName,jmxPlan from testplan where id = ?";
+		return get(sql, id);
+	}
 
 }

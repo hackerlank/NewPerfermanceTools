@@ -418,12 +418,7 @@ $(function() {
 	
 })
 
-/**
- * 执行测试计划
- */
-function runTest(){
-	
-}
+
 
 function testActive(type){
 //	$("#tabs-52171 ul li:last").attr("class","active");

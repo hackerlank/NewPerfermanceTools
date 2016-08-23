@@ -17,6 +17,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import cn.systoon.qc.shell.ExecuteShell;
 
 import cn.systoon.qc.dao.impl.ApiInfoDAOImpl;
 import cn.systoon.qc.dao.impl.ParametersDAOImpl;
@@ -423,6 +424,50 @@ public class PerformServlet extends HttpServlet {
 		log.info("********getListApiPath***********" + result);
 		response.setCharacterEncoding("UTF-8");
 		response.getWriter().println(result);
+	}
+	
+	/**
+	 * 执行测试
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	protected void run(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		System.out.println("获取testPlan地址");
+		String id = request.getParameter("plan");
+		System.out.println(id);
+		TestPlanDAOImpl testPlanDAOImpl = new TestPlanDAOImpl();
+		TestPlan testPlan = testPlanDAOImpl.getJmxPlanWithPlanId(id);
+		
+		String jmxPlan = testPlan.getJmxPlan();
+		String jmxPlanName = testPlan.getTestPlanName();
+		String jtlResult = jmxPlanName.substring(0, jmxPlanName.lastIndexOf(".")) + ".jtl";
+		String baseJmeterPath = this.getServletContext().getInitParameter("baseJmeterPath");
+		String baseJtlPath = this.getServletContext().getInitParameter("baseJtlPath");
+		
+		// 执行jmeter命令(绝对路径)
+		String jmeterRemoteExecute = baseJmeterPath + "jmeter.sh" 
+									+ " -n -t " + jmxPlan 
+									+ " -l " + baseJtlPath + jtlResult;
+		
+
+		System.out.println(jmxPlan);    //获取测试计划绝对路径
+		System.out.println(jmeterRemoteExecute);    //获取测试计划绝对路径
+
+		/**
+		 * 后端调用shell ／ 批处理文件 执行 jmeter -n (no GUI)
+		 */
+		
+		Process pid = null;
+        try {
+            pid = new ExecuteShell().executeShell(jmeterRemoteExecute); 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        System.out.println(pid.toString());
 	}
 	
 	/**

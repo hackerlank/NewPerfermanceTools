@@ -97,8 +97,6 @@ function changeToAddDesc() {
 }
 
 
-
-
 /**
  * 加载全局变量
  */
@@ -121,7 +119,25 @@ $(function() {
  * 执行测试计划
  */
 function runTest(){
-	
+	alert("############");
+	var url = "../performServlet?method=run";
+	$.ajax({
+		type : "post",
+		url : url,
+		data : $("#form").serialize(),
+		success : function(msg) {
+			/*
+			 * var text=$("<p></p>").text(msg);
+			 * $("#console").append(text);
+			 */
+			$("#console_run").html(msg);
+		},
+		error : function(xhr) {
+			alert("错误提示： " + xhr.status + " " + xhr.statusText);
+		}
+
+	});
+	return false;
 }
 
 

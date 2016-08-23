@@ -27,4 +27,14 @@
 		<param-name>jmxPlanTemple</param-name>
 		<param-value>/Users/perfermance/JmeterTest/script/jmxPlanTemple.jmx</param-value>
 	</context-param>
+	
+	<context-param>
+		<param-name>baseJmeterPath</param-name>
+		<param-value>/Users/perfermance/JmeterTest/apache-jmeter-2.13/bin/</param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>baseJtlPath</param-name>
+		<param-value>/Library/WebServer/Documents/jtl/</param-value>
+	</context-param>
 </web-app>
