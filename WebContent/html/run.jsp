@@ -80,6 +80,7 @@
 						</div>
 					</div>
 				</form>
+							 <button onclick="getRuningLog(0)">打印日志</button> 
 				<fieldset>
 					<legend>console</legend>
 					<div id="console_run"></div>
