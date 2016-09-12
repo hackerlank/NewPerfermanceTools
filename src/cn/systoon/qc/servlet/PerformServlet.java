@@ -1,9 +1,15 @@
 package cn.systoon.qc.servlet;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.Method;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.sql.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -466,70 +472,71 @@ public class PerformServlet extends HttpServlet {
 
 		Process pid = null;
 		pid = new ExecuteShell().executeShell(jmeterRemoteExecute);
-		logMap.clear();
-		if (pid != null) {
-			BufferedReader br = new BufferedReader(new InputStreamReader(pid.getInputStream()), 1024);
-			String msg = null;
-			Integer i = 0;
-			while ((msg = br.readLine()) != null) {
-				logMap.put(i, msg);
-				i++;
-//				System.out.println(msg);
-			}
-			br.close();
-			pid.destroy();
-		} else {
-			logMap.put(0, "进程没有启动");
-		}
+		serverSocketPrintLog(pid);  //
 
 	}
-
+	
 	/**
-	 * 获取logMap执行日志
-	 * 只有执行run方法后，才执行此方法
-	 * @param request
-	 * @param response
+	 * 
+	   * @Name: serverSocketPrintLog
+	   * @Description: 通过socket方式打印Log
+	   * @param pid
+	   * @Author: zhengah（作者）
+	   * @Version: V1.00 （版本号）
+	   * @Create Date: 2016年9月6日上午9:58:49
+	   * @Parameters: PerformServlet
+	   * @Return: void
 	 */
-	protected void getMapLog(HttpServletRequest request, HttpServletResponse response){
-		/**
-		 * 获取所有参数
-		 */
+	protected void serverSocketPrintLog(Process pid){
 		
-		// 将对象转为Json串
-		log.info("********getMapLog***********");
-		
-		String line = request.getParameter("line");
-		Integer i = Integer.parseInt(line);
-		int j = logMap.size();
-		System.out.println(i);
-		String[] strs = null;
-		String result = "";
-//		Map<Integer,String> logMapTemp = new HashMap<Integer,String>();
-		
-		if(i <= j){
-			strs = new String[j-i+1];
-			for(int m=0;m<strs.length;m++){       //每次返回请求行至当前日志总行数的所有记录 
-//			logMapTemp.put(j+1, logMap.get(i));
-				strs[m] = logMap.get(i);
-				i++;
+		ServerSocket serverSocket = null;
+		Socket socket = null;
+		BufferedReader bufferedReader = null;
+		BufferedWriter bufferedWriter = null;
+		try {
+			serverSocket = new ServerSocket(9090);
+			socket = serverSocket.accept();
+			bufferedReader = new BufferedReader(new InputStreamReader(pid.getInputStream()));
+			bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+			String str = null;
+			while((str = bufferedReader.readLine()) != null){
+				bufferedWriter.write(str);
+				bufferedWriter.flush();
 			}
-			ObjectMapper objectMapper = new ObjectMapper();
-			try {
-				result = objectMapper.writeValueAsString(strs);
-			} catch (JsonProcessingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally{
+			if(bufferedWriter != null){
+				try {
+					bufferedWriter.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
-			System.out.println(result);
-			response.setCharacterEncoding("UTF-8");
-			try {
-				response.getWriter().println(result);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			if(bufferedReader != null){
+				try {
+					bufferedReader.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			if(socket != null){
+				try {
+					socket.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			if(serverSocket != null){
+				try {
+					socket.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
-
+		
 	}
 	
 	/**

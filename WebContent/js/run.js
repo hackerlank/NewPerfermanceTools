@@ -175,3 +175,11 @@ function getRuningLog(line) {
 	});
 
 }
+
+//等待2秒后执行
+//alert(0);
+////setInterval("aaa();",2000);    //每隔2s执行一次
+//setTimeout("aaa();",2000);    //等待2s执行一次
+//function aaa(){
+// alert();
+//}
